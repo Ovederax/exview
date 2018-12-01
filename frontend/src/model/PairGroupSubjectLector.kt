@@ -2,7 +2,8 @@ package model
 
 import rest.*
 
-class PairLectorSubjects {
+class PairGroupSubjectLector {
+	var group: JsonStudentGroup = JsonStudentGroup()
+	var subject: JsonSubject = JsonSubject()
 	var lector: JsonLector = JsonLector()
-	var subjects: List<JsonSubjects> = ArrayList()
 }
