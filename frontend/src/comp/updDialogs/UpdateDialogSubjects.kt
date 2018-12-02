@@ -9,47 +9,47 @@ import kotlin.browser.window
 import org.w3c.dom.*
 import org.w3c.dom.events.Event
 
-class UpdateDialogCathedras: RComponent<UpdateDialogCathedras.Props, RState>() {
+class UpdateDialogSubjects: RComponent<UpdateDialogSubjects.Props, RState>() {
     var refs:dynamic = null
 
     interface Props : RProps{
-        var onUpdate : (JsonCathedra?)->Unit
+        var onUpdate : (List<JsonSubject>)->Unit
         var num : Int
-		var cathedras: List<JsonCathedra>
-		var cathedra: JsonCathedra?
+		var allSubjects: List<JsonSubject>
+		var lectorSubjects: List<JsonSubject>
     }
 
     fun handleSubmit(e: Event) {
-        e.preventDefault()
+        /*e.preventDefault()
         val select = findDOMNode(this.refs["selectCathedra"]) as HTMLSelectElement
         val id = select.selectedIndex
 		if(id == 0) {
             props.onUpdate(null)
         } else {
-			val cathetra = props.cathedras[id-1]
+			val cathetra = props.allSubjects[id-1]
             props.onUpdate(cathetra)
         }
 		select.selectedIndex = 0
-        window.location.href = "#"
+        window.location.href = "#"*/
     }
 
     override fun RBuilder.render() {
         div {
-            a("#updCathedra_" + props.num.toString()) {
+            a("#updSubjects_" + props.num.toString()) {
                 +"Просмотр"
             }
             div("modalDialog") {
-                attrs["id"] = "updCathedra_" + props.num.toString()
+                attrs["id"] = "updSubjects_" + props.num.toString()
                 div {
                     a("#", classes = "close") { 
 						+"X"
-						attrs.onClickFunction = {
+						/*attrs.onClickFunction = {
 						    val select = findDOMNode(refs["selectCathedra"]) as HTMLSelectElement
 							select.selectedIndex = 0
-						}
+						}*/
 					}
-					var name = props.cathedra?.name ?: "не установлена"
-                    h3 { +"Кафедра преподователя" }
+					/*var name = props.lectorSubjects?.name ?: "не установлена"
+                    h3 { +"Предметы преподователя" }
 					p { +"На данный момент $name"}
 					p {
                         select(classes = "selectClasses") {
@@ -57,7 +57,7 @@ class UpdateDialogCathedras: RComponent<UpdateDialogCathedras.Props, RState>() {
                             option {
                                 +"(пусто)"
                             }
-                            props.cathedras.map { prop ->
+                            props.allSubjects.map { prop ->
                                 option {
                                     +prop.name
                                 }
@@ -65,6 +65,7 @@ class UpdateDialogCathedras: RComponent<UpdateDialogCathedras.Props, RState>() {
                         }
                     }
 					
+					*/
 					button {
                         attrs { onClickFunction = { handleSubmit(it) } }
                             +"Применить"
@@ -76,10 +77,10 @@ class UpdateDialogCathedras: RComponent<UpdateDialogCathedras.Props, RState>() {
 }
 
 
-fun RBuilder.UpdateDialogCathedras(num: Int, cathedras: List<JsonCathedra>, cathedra: JsonCathedra?, onUpdate:(JsonCathedra?)->Unit)
-        = child(UpdateDialogCathedras::class) {
+fun RBuilder.UpdateDialogSubjects(num: Int, allSubjects: List<JsonSubject>, lectorSubjects: List<JsonSubject>, onUpdate:(List<JsonSubject>)->Unit)
+        = child(UpdateDialogSubjects::class) {
     attrs.onUpdate = onUpdate
     attrs.num = num
-    attrs.cathedras = cathedras
-    attrs.cathedra = cathedra
+    attrs.allSubjects = allSubjects
+    attrs.lectorSubjects = lectorSubjects
 }

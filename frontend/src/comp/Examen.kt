@@ -1,30 +1,71 @@
 package comp
 
-//import kotlinx.html.InputType
-//import kotlinx.html.js.onClickFunction
-//import org.w3c.dom.HTMLInputElement
-//import org.w3c.dom.events.Event
-//import react.RBuilder
-//import react.RComponent
-//import react.RProps
-//import react.RState
-//import react.dom.*
-//import rest.JsonEmployee
-//import rest.Property
-//import rest.fromPropsArray
-//import rest.toPropsArray
-//import kotlin.browser.window
-//
-//class UpdateDialog: RComponent<UpdateDialog.Props, RState>() {
-//    var refs:dynamic = null
-//    interface Props:RProps{
-//        var attributes: List<Property>
-//        var onUpdate:(JsonEmployee)->Unit
-//        var employee: JsonEmployee
-//    }
-//
-//    override fun RBuilder.render() {
-//        div() {
+import kotlinx.html.js.onClickFunction
+import kotlinx.html.*
+import org.w3c.dom.*
+import react.*
+import react.dom.*
+import rest.*
+import kotlin.browser.window
+import org.w3c.dom.events.Event
+
+class Examen: RComponent<Examen.Props, Examen.State>() {
+    var refs:dynamic = null
+    interface Props:RProps {
+		var attributes: List<Property>
+    }
+	
+	interface State: RState {
+		var type: TypeShow
+	}
+	
+	enum class TypeShow {
+        LECTOR, STUDENT_GROUP, SUBJECT
+    }
+	
+	init {
+		state.type = TypeShow.STUDENT_GROUP
+	}
+	
+	override fun componentDidMount() {
+        loadInfo(state.type)
+    }
+	
+	private fun loadInfo(type: TypeShow) {
+		state.type = type
+		setState {}
+	}
+    
+	override fun RBuilder.render() {
+        div() {
+			+"Просмотр календаря экзаменов"
+			div() {
+				button (classes = "materialBtn") { +"По преподователю";   	attrs.onClickFunction = { loadInfo(TypeShow.LECTOR) } }
+				button (classes = "materialBtn") { +"По группе";    	 	attrs.onClickFunction = { loadInfo(TypeShow.STUDENT_GROUP) } }
+				button (classes = "materialBtn") { +"По предмету";   		attrs.onClickFunction = { loadInfo(TypeShow.SUBJECT) } }
+			}
+			p() {	
+				table {
+					tbody {
+						tr {
+							when(state.type) {
+								TypeShow.LECTOR -> th { +"Преподователь" }
+								TypeShow.STUDENT_GROUP -> th { +"Группа" }
+								TypeShow.SUBJECT -> th { +"Предмет" }
+								else -> {}
+							}
+							
+							for(i in 0..30) {
+								th { +(i+1).toString() }
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+			
 //            //attrs.key = props.employee.entity._links.self.href
 //            //var dialogId = "updateEmployee-${props.employee.entity._links.self.href}"
 //            val str = props.employee._links.self?.href?.substringAfter("http://localhost:8080/")?.replace("/","-")
@@ -57,11 +98,9 @@ package comp
 //                    }
 //                }
 //            }
-//        }
-//    }
-//
-//
-//    fun handleSubmit(e: Event) {
+
+
+    fun handleSubmit(e: Event) {
 //        e.preventDefault()
 //        val updatedEmployee = Array(props.attributes.size) {
 //            (findDOMNode(this.refs[props.attributes[it].title]) as HTMLInputElement).value.trim()
@@ -71,12 +110,16 @@ package comp
 //            (findDOMNode(this.refs[attr.title]) as HTMLInputElement).value = ""
 //        }
 //        window.location.href = "#"
-//    }
-//}
-//
-//fun RBuilder.UpdateDialog(attributes: List<Property>, employee: JsonEmployee, onUpdate:(JsonEmployee)->Unit)
-//        = child(UpdateDialog::class) {
-//    attrs.attributes = attributes
-//    attrs.onUpdate = onUpdate
-//    attrs.employee = employee
-//}
+    }
+
+
+fun RBuilder.Examen() = child(Examen::class) {
+
+}
+
+
+
+
+
+
+

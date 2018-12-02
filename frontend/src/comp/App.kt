@@ -2,9 +2,9 @@ package comp
 
 import kotlinx.html.js.onClickFunction
 import react.*
-import react.dom.button
-import react.dom.div
-import rest.Client
+import react.dom.*
+import rest.*
+import comp.infoTables.*
 
 
 class App : RComponent<RProps, App.State>() {
@@ -73,10 +73,10 @@ class App : RComponent<RProps, App.State>() {
 						InfoList()
 					}
 					PageShow.SESSION -> {
-						+"2"
+						InfoTableStudentGroups("studentsGroups", 0, false)
 					}
 					PageShow.EXAMEN -> {
-						+"3"
+						Examen()
 					}
 				}
 			}

@@ -64,6 +64,25 @@ class Loader {
         }
 	}
 	
+	//1.4 Получить кафедру преподователя
+	// Входной аргумент – JsonLector
+	// Выход – нет 
+	fun getCathedraByLector(lector: JsonLector, call: (JsonCathedra?) -> Unit = {}) {
+		val url = lector._links.cathedra?.href
+		if(url != null) {
+			client.fetch(url) { e ->
+				if(e == "") {
+					call(null)
+				} else {
+					call(JSON.parse<JsonCathedra>(e))
+				}
+			}
+		}else {
+			call(null)
+		}
+
+	}
+	
 	// 2 Таблица Группы
 	// Мне нужно устанавливать связки группа-предмет-преподователь для сессионных предметов.
 	

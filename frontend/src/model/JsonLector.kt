@@ -18,11 +18,6 @@ class JsonLector (
                 JsonLector(employee[0])
     }
 }
-class PojoLector {
-	var name : String = ""
-	//var cathedrs: Set<> = HashSet()
-	//var subjects: Set = HashSet()
-}
 
 interface JsonLectors {
     val lectors: Array<JsonLector>

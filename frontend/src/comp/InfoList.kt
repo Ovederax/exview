@@ -21,7 +21,7 @@ class InfoList : RComponent<InfoList.Props, InfoList.State>() {
         state.infoType =InfoType.LECTORS
         state.lectors = ArrayList()
         state.path =  ""
-		state.pageSize = 5
+		state.pageSize = 10
     }
 
     interface Props: RProps {
@@ -109,7 +109,7 @@ class InfoList : RComponent<InfoList.Props, InfoList.State>() {
 				InfoTableCathedras(InfoType.CATHEDRAS.url, state.pageSize) { gotoSubPage() }
             }
 			InfoType.STUDENT_GROUPS -> {
-				InfoTableStudentGroups(InfoType.STUDENT_GROUPS.url, state.pageSize) { gotoSubPage() }
+				InfoTableStudentGroups(InfoType.STUDENT_GROUPS.url, state.pageSize)
             }
         }
 

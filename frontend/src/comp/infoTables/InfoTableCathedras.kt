@@ -13,7 +13,8 @@ import rest.*
 
 
 class InfoTableCathedras : RComponent<InfoTableCathedras.Props, InfoTableCathedras.State>() {
-    private val client = Client()
+    var refs:dynamic = null
+	private val client = Client()
     private fun url(str: String) =
             "http://localhost:8080/$str"
 
@@ -55,10 +56,7 @@ class InfoTableCathedras : RComponent<InfoTableCathedras.Props, InfoTableCathedr
         }
     }
     override fun RBuilder.render() {
-
-        //    CreateDialog(state.attributes, ::onCreate)
-        //    EmployeeList(state.employees, state.links, state.pageSize*state.pageNum, state.attributes, ::onNavigate, ::onUpdate, ::onDelete, ::onUpdatePageSize)
-        table {
+		table {
             tbody {
                 tr {
                     th { +"N" }
@@ -79,22 +77,25 @@ class InfoTableCathedras : RComponent<InfoTableCathedras.Props, InfoTableCathedr
                 }
 
                 state.cathedras.map {
-                    Cathedra(it, i/*, it._links.self?.href ?: ""*/){onDelete(it)}
+                    Cathedra(it, i){onDelete(it)}
 					++i;
 				}
             }
         }
-        button { +"<<";  attrs.onClickFunction={onNavigate(state.links.first?.href)}}
+        button { +"<<";  attrs.onClickFunction={onNavigate(state.links.first?.href)};attrs.disabled=state.links.prev?.href==null; }
         button { +"<";   attrs.onClickFunction={onNavigate(state.links.prev?.href) };attrs.disabled=state.links.prev?.href==null; }
         button { +">";   attrs.onClickFunction={onNavigate(state.links.next?.href) };attrs.disabled=state.links.next?.href==null; }
-        button { +">>";  attrs.onClickFunction={onNavigate(state.links.last?.href)}}
+        button { +">>";  attrs.onClickFunction={onNavigate(state.links.last?.href) };attrs.disabled=state.links.next?.href==null; }
         div {
             p {
                 +"Название кафедры  "
-                input {}
+                input {
+					attrs["ref"] = "inputName"
+				}
             }
             button { +"Добавить кафедру"; attrs.onClickFunction={
-
+				val input = findDOMNode(refs["inputName"]) as HTMLInputElement
+				onCreate(JsonCathedra(input.value))
             } }
         }
 
@@ -125,8 +126,8 @@ class InfoTableCathedras : RComponent<InfoTableCathedras.Props, InfoTableCathedr
         e.preventDefault()
         onNavigate(href)
     }
-    private fun onDelete(lector: JsonCathedra){
-        client.delete(lector._links.self?.href?:""){loadFromServer(props.pageSize)}
+    private fun onDelete(cathedra: JsonCathedra){
+        client.delete(cathedra._links.self?.href?:""){loadFromServer(props.pageSize)}
     }
 
     private fun onCreate(item: JsonCathedra) {
@@ -134,23 +135,14 @@ class InfoTableCathedras : RComponent<InfoTableCathedras.Props, InfoTableCathedr
 
         client.post(cleanUrl(state.links.self?.href),json) {
             loadFromServer(props.pageSize) {
-                    val h = state.links.last?.href?:""
-                    onNavigate(h)
+                    val h = state.links.last?.href
+					if(h != null) {
+						onNavigate(h)
+					}
                 }
         }
     }
 
-    private fun onUpdate(item: JsonCathedra) {
-
-        var path = item._links.self?.href
-        val json = JSON.stringify(item)
-        /*if(path != null) {
-            client.put(path, json,0) { response ->
-                loadFromServer(state.pageSize)
-            }
-        }*/
-
-    }
     private fun onNavigate(url:String?){
         if(url == null)
             return
