@@ -9,12 +9,12 @@ class SessionSubject {
     @GeneratedValue(strategy= GenerationType.AUTO)
     var id: Long = 0
 
-    @ManyToOne//(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
-    var lector: Lector = Lector()
+    @ManyToOne()
+    var lector: Lector? = null
 
-    @ManyToOne( fetch = FetchType.LAZY)
-    var studentGroup: StudentsGroup = StudentsGroup()
+    @ManyToOne()
+    var studentsGroup: StudentsGroup? = null
 
-    @ManyToOne
-    var subject: Subject = Subject()
+    @ManyToOne()
+    var subject: Subject? = null
 }

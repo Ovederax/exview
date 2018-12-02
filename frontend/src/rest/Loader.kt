@@ -28,15 +28,18 @@ class Loader {
     }
 	
 	//1.1 Получить список предметов по кафедре
-	// Mapping  «/getSubjectByCathedra
 	// Входной аргумент – JsonCathedra
 	// Выход – List<JsonSubject> 
 	fun getSubjectByCathedra(cathedra: JsonCathedra, call: (List<JsonSubject>) -> Unit) {
-		val url = url("getSubjectByCathedra")
-		client.getMethod(url, JSON.stringify(cathedra)) { e ->
-            val list = JSON.parse<List<JsonSubject>>(e)
-			call(list)
-        } 
+		val url = cathedra._links.subjects?.href
+		if(url != null) {
+			client.fetch(url) { e ->
+				val list = JSON.parse<List<JsonSubject>>(e)
+				call(list)
+			} 
+		} else {
+			call(ArrayList())
+		}
 	}
 	
 	// 1.2 Установить Кафедру для преподавателя
@@ -65,15 +68,18 @@ class Loader {
 	// Мне нужно устанавливать связки группа-предмет-преподователь для сессионных предметов.
 	
 	// 2.1) Получить список преподавателей по предмету
-	// Mapping  «/getLectorsBySubject »
 	// Входной аргумент – JsonSubject
 	// Выход – List<JsonLector>
 	fun getLectorsBySubject(subject: JsonSubject, call: (List<JsonLector>) -> Unit) {
-		val url = url("getLectorsBySubject")
-		client.getMethod(url, JSON.stringify(subject)) { e ->
-            val list = JSON.parse<List<JsonLector>>(e)
-			call(list)
-        } 
+		val url = subject._links.lectors?.href
+		if(url != null) {
+			client.fetch(url) { e ->
+				val list = JSON.parse<List<JsonLector>>(e)
+				call(list)
+			}	
+		}else {
+			call(ArrayList())
+		}
 	}
 	
 	// 2.2) При отправке мной группы, предмета,
@@ -88,12 +94,11 @@ class Loader {
 	}
 	
 	// 2.3) Получить список уже настроенных пар Предмет-Преподаватель для группы
-	// Mapping  «/getSubjectAndLectorByStudentGroup »
 	// Входной аргумент – JsonStudentGroup
 	// Выход – List<PairLectorSubject> 	
 	fun getSubjectAndLectorByStudentGroup(studentGroup: JsonStudentGroup, call: (List<PairLectorSubject>)->Unit) {
 		val url = url("getSubjectAndLectorByStudentGroup")
-		client.getMethod(url, JSON.stringify(studentGroup)) { e ->
+		client.fetch(url) { e ->
             val list = JSON.parse<List<PairLectorSubject>>(e)
 			call(list)
         } 

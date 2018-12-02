@@ -9,14 +9,12 @@ data class Lector(var name: String = "") {
     @GeneratedValue(strategy= GenerationType.AUTO)
     var id: Long = 0
 
-    @ManyToMany( fetch = FetchType.EAGER, cascade = [CascadeType.PERSIST, CascadeType.MERGE])
+    @ManyToMany//(fetch = FetchType.LAZY, cascade = [CascadeType.MERGE])
     var subjects: MutableSet<Subject> = HashSet()
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = [CascadeType.PERSIST, CascadeType.MERGE])
+    @ManyToOne//(fetch = FetchType.LAZY, cascade = [CascadeType.MERGE])
     var cathedra: Cathedra? = null
 
-    //лектор ведет занятие у группы и принимает у нее экзамен
-    // причем ведет определенный предмет
-
-    //был сделан отдельный класс связывающий эти сущеости
+    @OneToMany//( fetch = FetchType.LAZY, cascade = [CascadeType.MERGE])
+    var sessionSubjects: MutableSet<SessionSubject> = HashSet()
 }

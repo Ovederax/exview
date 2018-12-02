@@ -9,16 +9,16 @@ data class Cathedra(var name: String = "") {
     @GeneratedValue(strategy = GenerationType.AUTO)
     var id: Long = 0
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
-    var facultet: Facultet = Facultet()
+    //@ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    //var facultet: Facultet = Facultet()
 
-    @OneToMany(orphanRemoval = false, fetch = FetchType.LAZY)//, cascade = [CascadeType.ALL])
+    @OneToMany//(orphanRemoval = false, fetch = FetchType.LAZY)//, cascade = [CascadeType.ALL])
     var lectors: MutableSet<Lector> = HashSet()
 
-    @OneToMany(orphanRemoval = false, fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
-    var subject: MutableSet<Subject>? = HashSet()
+    @OneToMany//(orphanRemoval = false, fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    var subject: MutableSet<Subject> = HashSet()
 
-    @OneToMany(orphanRemoval = false, fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
-    var auditorium: MutableSet<Auditorium>? = HashSet()
+    @OneToMany//(orphanRemoval = false, fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    var auditorium: MutableSet<Auditorium> = HashSet()
 
 }
