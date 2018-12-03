@@ -63,7 +63,6 @@ class InfoTableCathedras : RComponent<InfoTableCathedras.Props, InfoTableCathedr
                     th { +"Название" }
                     th { +"Аудитории" }
                     th { +"Предметы" }
-                    th { +"Факультеты" }
                     th { +"Преподователи" }
                     th { +"Удалить" }
                 }

@@ -5,62 +5,48 @@ import org.springframework.boot.CommandLineRunner
 import org.springframework.stereotype.Component
 import ru.omgups.exview.model.*
 import ru.omgups.exview.repo.*
-
-fun Lector.addSubject(subj: Subject) {
-    subjects.add(subj)
-    subj.lectors.add(this)
-}
+import ru.omgups.exview.servises.*
 
 fun Subject.addLector(lector: Lector) {
     lector.addSubject(this)
-}
-
-fun Lector.setCathedra(cathedra: Cathedra) {
-    this.cathedra = cathedra
-    cathedra.lectors.add(this)
 }
 
 fun Cathedra.addLector(lector: Lector) {
     lector.setCathedra(this)
 }
 
-fun SessionSubject.setStudentGroup(studentsGroup: StudentsGroup) {
-    this.studentsGroup = studentsGroup
-    studentsGroup.sessionSubjects.add(this)
-}
 
-fun SessionSubject.setSubject(subject: Subject) {
-    this.subject = subject
-    subject.sessionSubjects.add(this)
-}
-
-fun SessionSubject.setLector(lector: Lector) {
-    this.lector = lector
-    lector.sessionSubjects.add(this)
-}
 
 @Component
 class DatabaseLoader() : CommandLineRunner {
     @Autowired
     lateinit var subjectRepo: SubjectRepo
-    
-	@Autowired
+
+    @Autowired
     lateinit var lectorRepo: LectorRepo
-	
-	@Autowired
+
+    @Autowired
     lateinit var cathedraRepo: CathedraRepo
 
-	@Autowired
+    @Autowired
     lateinit var studentsGroupRepo: StudentsGroupRepo
-	
-	@Autowired
+
+    @Autowired
     lateinit var auditoriumRepo: AuditoriumRepo
 
     @Autowired
     lateinit var sessionSubjectGroupRepo: SessionSubjectRepo
 
-	
+
     override fun run(vararg args: String?) {
+//        val cath1 = Cathedra("АиСУ")
+//        val lector1 = Lector("Иванов Иван Иванович")
+//        lectorRepo.saveAll(arrayListOf(lector1))
+//        cathedraRepo.saveAll(arrayListOf(cath1))
+//        lectorRepo.saveAll(arrayListOf(lector1))
+//        cathedraRepo.saveAll(arrayListOf(cath1))
+
+
         val cath1 = Cathedra("АиСУ")
         val cath2 = Cathedra("Автоматика и телемеханика")
         val cath3 = Cathedra("Безопастность жихнедейтельности и экология")
@@ -107,17 +93,16 @@ class DatabaseLoader() : CommandLineRunner {
         studentsGroupRepo.save(StudentsGroup("11f"))
         studentsGroupRepo.save(StudentsGroup("11g"))
 
-        val l1 =  SessionSubject()
+        val l1 = SessionSubject()
         sessionSubjectGroupRepo.save(l1)
 
         l1.setLector(lector1)
         l1.setStudentGroup(group1)
         l1.setSubject(subj1)
 
-        cathedraRepo.saveAll(arrayListOf(cath1,cath2,cath3,cath4,cath5,cath6))
+        cathedraRepo.saveAll(arrayListOf(cath1, cath2, cath3, cath4, cath5, cath6))
         lectorRepo.saveAll(arrayListOf(lector1, lector2, lector3, lector4))
         subjectRepo.saveAll(arrayListOf(subj1, subj2, subj3, subj4, subj5, subj6, subj7))
         sessionSubjectGroupRepo.save(l1)
-
-	}
+    }
 }

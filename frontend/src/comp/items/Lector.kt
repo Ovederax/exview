@@ -20,16 +20,18 @@ class Lector: RComponent<Lector.Props, Lector.State>(){
 	
 	interface State: RState {
 		var cathedra: JsonCathedra?
-		var lectorSubjects: List<JsonSubject>
+	}
+
+	fun reloadData() {
+		Loader().getCathedraByLector(props.jsonLector)
+		{ it ->
+			state.cathedra = it
+			setState{}
+		}
 	}
 	
 	override fun componentDidMount() {
-		Loader().getCathedraByLector(props.jsonLector)
-		{ it ->
-			setState {
-				cathedra = it
-			}
-		}
+		reloadData()
 	}
 	
 	
@@ -41,18 +43,19 @@ class Lector: RComponent<Lector.Props, Lector.State>(){
                 UpdateDialogCathedras(props.num, props.cathedras, state.cathedra) {
 					//Установка кафедры лектору
 					Loader().setCathedraInLector(PairLectorCathedra(props. jsonLector, it)) {
-						
+						reloadData()
 					}
                 }
             }
             td {
 				//props.jsonLector._links.subjects?.href, 
-				UpdateDialogSubjects(props.num, props.allSubjects, state.lectorSubjects) {
+				UpdateDialogSubjects(props.jsonLector,props.num, props.allSubjects) { it ->
 					//добавление предметов лектору
-					var client = Client()
-					var send = JSON.stringify(props.jsonLector)
-					client.post("http://localhost:8080/lectors", send) {
-						console.log(it)
+					val pair = PairLectorSubjects()
+					pair.lector = props.jsonLector
+					pair.subjects = it
+					Loader().setSubjectsInLector(pair) {
+						reloadData()
 					}
 				}
             }
@@ -67,10 +70,11 @@ class Lector: RComponent<Lector.Props, Lector.State>(){
         }
     }
 }
-fun RBuilder.Lector(jsonLector: JsonLector, num: Int, cathedras: List<JsonCathedra>, onDelete:()->Unit = {})
+fun RBuilder.Lector(jsonLector: JsonLector, num: Int, cathedras: List<JsonCathedra>, allSubjects: List<JsonSubject>, onDelete:()->Unit = {})
         = child(Lector::class) {
     attrs.jsonLector = jsonLector
     attrs.onDelete = onDelete
     attrs.num = num
     attrs.cathedras = cathedras
+    attrs.allSubjects = allSubjects
 }

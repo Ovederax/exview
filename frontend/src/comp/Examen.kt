@@ -8,14 +8,16 @@ import react.dom.*
 import rest.*
 import kotlin.browser.window
 import org.w3c.dom.events.Event
+import model.*
 
 class Examen: RComponent<Examen.Props, Examen.State>() {
     var refs:dynamic = null
     interface Props:RProps {
-		var attributes: List<Property>
+		
     }
 	
 	interface State: RState {
+		var sessionSubjects: List<JsonSessionSubject>
 		var type: TypeShow
 	}
 	
@@ -33,7 +35,11 @@ class Examen: RComponent<Examen.Props, Examen.State>() {
 	
 	private fun loadInfo(type: TypeShow) {
 		state.type = type
-		setState {}
+		Loader().getAllSessionSubject {
+			setState {
+				sessionSubjects = it
+			}
+		}
 	}
     
 	override fun RBuilder.render() {

@@ -42,6 +42,32 @@ class Loader {
 		}
 	}
 	
+	fun loadAllSubjects(call: (List<JsonSubject>) -> Unit) {
+		val url = url("subjects")
+		if(url != null) {
+			client.fetch(url) { e ->
+				val embed = JSON.parse<Embedded<JsonSubjects>>(e)
+				val list = embed._embedded?.subjects?.toList() ?: ArrayList()
+				call(list)
+			} 
+		} else {
+			call(ArrayList())
+		}
+	}
+	
+	fun getLectorSubjects(lector: JsonLector, call: (List<JsonSubject>) -> Unit) {
+		val url = lector._links.subjects?.href
+		if(url != null) {
+			client.fetch(url) { e ->
+				val embed = JSON.parse<Embedded<JsonSubjects>>(e)
+				val list = embed._embedded?.subjects?.toList() ?: ArrayList()
+				call(list)
+			} 
+		} else {
+			call(ArrayList())
+		}
+	}
+	
 	// 1.2 Установить Кафедру для преподавателя
 	// Mapping  «/setCathedraInLector »
 	// Входной аргумент – PairLectorCathedra
@@ -85,6 +111,15 @@ class Loader {
 	
 	// 2 Таблица Группы
 	// Мне нужно устанавливать связки группа-предмет-преподователь для сессионных предметов.
+	
+		fun getAllSessionSubject(call: (List<JsonSessionSubject>) -> Unit) {
+		val url = url("sessionSubjects")
+		client.fetch(url) { e ->
+			val embed = JSON.parse<Embedded<JsonSessionSubjects>>(e)
+			val list = embed._embedded?.sessionSubjects?.toList() ?: ArrayList()
+			call(list)
+		} 
+	}
 	
 	// 2.1) Получить список преподавателей по предмету
 	// Входной аргумент – JsonSubject

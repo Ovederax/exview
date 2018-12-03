@@ -40,14 +40,6 @@ class Cathedra: RComponent<Cathedra.Props, RState>(){
 			td {
                 button {
                     attrs { onClickFunction = {
-                            +props.jsonCathedra._links.facultets!!.href
-                        }}
-                    +"Просмотр"
-                }
-            }
-			td {
-                button {
-                    attrs { onClickFunction = {
                             +props.jsonCathedra._links.lectors!!.href
                         }}
                     +"Просмотр"

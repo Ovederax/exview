@@ -33,12 +33,14 @@ class InfoTableLectors : RComponent<InfoTableLectors.Props, InfoTableLectors.Sta
         state.page = Page()
         state.bufPage = 0
 		state.cathedras = ArrayList()
+		state.subjects = ArrayList()
     }
 
     interface State : RState {
         var attributes: List<Property>
         var lectors: List<JsonLector>
         var cathedras: List<JsonCathedra>
+        var subjects: List<JsonSubject>
         var links: Links
         var pageNum: Int
         var page: Page
@@ -76,7 +78,7 @@ class InfoTableLectors : RComponent<InfoTableLectors.Props, InfoTableLectors.Sta
                 }
 
                 state.lectors.map {
-                    Lector(it, i, state.cathedras){onDelete(it)}
+                    Lector(it, i, state.cathedras, state.subjects){onDelete(it)}
 					++i;
 				}
             }
@@ -94,7 +96,10 @@ class InfoTableLectors : RComponent<InfoTableLectors.Props, InfoTableLectors.Sta
             }
             button { +"Добавить преподователя"; attrs.onClickFunction={
 				val input = findDOMNode(refs["inputFIO"]) as HTMLInputElement
-				onCreate(JsonLector(input.value))
+				if(input.value != "") {
+					onCreate(JsonLector(input.value))
+					input.value=""
+				}
             } }
         }
 
@@ -115,11 +120,14 @@ class InfoTableLectors : RComponent<InfoTableLectors.Props, InfoTableLectors.Sta
                 state.page = embed.page ?: Page()
 				Loader().loadCathedrasList("http://localhost:8080/cathedras") {
 					state.cathedras = it
-					if(call != null) {
+					Loader().loadAllSubjects() { s: List<JsonSubject> ->
+						state.subjects = s
+						if(call != null) {
 							call()
 						} else {
 							setState {	}
 						}
+					}
 				}	
             }
         }

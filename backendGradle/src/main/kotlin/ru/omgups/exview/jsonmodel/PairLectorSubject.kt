@@ -1,6 +1,5 @@
-package model
+package ru.omgups.exview.jsonmodel
 
-import rest.*
 
 class PairLectorSubjects {
 	var lector: JsonLector = JsonLector()

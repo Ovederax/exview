@@ -1,6 +1,4 @@
-package model
-
-import rest.Href
+package ru.omgups.exview.jsonmodel
 
 class JsonCathedra (
         var name: String = "",
@@ -15,6 +13,6 @@ class CathedraLinks{
     val self: Href?=null
     val auditorium: Href?=null
 	val subjects: Href?=null
-	//val facultets: Href?=null
+	val facultets: Href?=null
     val lectors: Href?=null
 }
