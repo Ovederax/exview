@@ -1,11 +1,9 @@
 package comp.infoTables
 
-import comp.items.StudentGroup
+import comp.items.*
 import kotlinx.html.js.onClickFunction
-import model.JsonStudentGroup
-import model.JsonStudentGroups
-import model.JsonLectors
-import org.w3c.dom.HTMLInputElement
+import model.*
+import org.w3c.dom.*
 import org.w3c.dom.events.Event
 import react.*
 import react.dom.*
@@ -23,7 +21,6 @@ class InfoTableStudentGroups : RComponent<InfoTableStudentGroups.Props, InfoTabl
 
     interface Props : RProps {
         var path: String
-        var gotoSubPage : ()->Unit
         var pageSize: Int
         var showAddBtn: Boolean
     }
@@ -31,15 +28,17 @@ class InfoTableStudentGroups : RComponent<InfoTableStudentGroups.Props, InfoTabl
     init {
         state.links = Links()
         state.studentsGroups = ArrayList()
-        state.attributes = ArrayList()
+        state.subjects = ArrayList()
+        state.lectorsMap = HashMap()
         state.links = Links()
         state.page = Page()
         state.bufPage = 0
     }
 
     interface State : RState {
-        var attributes: List<Property>
         var studentsGroups: List<JsonStudentGroup>
+        var subjects: List<JsonSubject>
+        var lectorsMap: MutableMap<JsonSubject, List<JsonLector>>
         var links: Links
         var pageNum: Int
         var page: Page
@@ -74,15 +73,18 @@ class InfoTableStudentGroups : RComponent<InfoTableStudentGroups.Props, InfoTabl
                     }
                 }
                 state.studentsGroups.map {
-                    StudentGroup(it, i){onDelete(it)}
+                    StudentGroup(it, i, state.subjects, state.lectorsMap){onDelete(it)}
 					++i;
 				}
             }
         }
-        button { +"<<";  attrs.onClickFunction={onNavigate(state.links.first?.href)};attrs.disabled=state.links.prev?.href==null; }
-        button { +"<";   attrs.onClickFunction={onNavigate(state.links.prev?.href) };attrs.disabled=state.links.prev?.href==null; }
-        button { +">";   attrs.onClickFunction={onNavigate(state.links.next?.href) };attrs.disabled=state.links.next?.href==null; }
-        button { +">>";  attrs.onClickFunction={onNavigate(state.links.last?.href) };attrs.disabled=state.links.next?.href==null; }
+		if(props.pageSize != 0) {
+			button { +"<<";  attrs.onClickFunction={onNavigate(state.links.first?.href)};attrs.disabled=state.links.prev?.href==null; }
+			button { +"<";   attrs.onClickFunction={onNavigate(state.links.prev?.href) };attrs.disabled=state.links.prev?.href==null; }
+			button { +">";   attrs.onClickFunction={onNavigate(state.links.next?.href) };attrs.disabled=state.links.next?.href==null; }
+			button { +">>";  attrs.onClickFunction={onNavigate(state.links.last?.href) };attrs.disabled=state.links.next?.href==null; }
+		}
+
 		if(props.showAddBtn) {
 			div {
 				p {
@@ -106,15 +108,24 @@ class InfoTableStudentGroups : RComponent<InfoTableStudentGroups.Props, InfoTabl
             client.fetch(profileURL, "application/schema+json") { s ->
                 val schema = JSON.parse<Schema<*>>(s)
                 val props = toArray<Property>(schema.properties)
-                setState {
-                    attributes = props.toList()
-
-                    studentsGroups = embed._embedded?.studentsGroups?.toList() ?: ArrayList()
-                    links = embed._links ?: Links()
-                    pageNum = embed.page?.number ?: 0
-                    call()
-                }
-
+				state.studentsGroups = embed._embedded?.studentsGroups?.toList() ?: ArrayList()
+				state.links = embed._links ?: Links()
+				state.pageNum = embed.page?.number ?: 0
+				Loader().loadAllSubjects() {
+					state.subjects = it
+					var counter = 0
+					var size = state.subjects.size-1
+					for(i in 0..size) {
+						Loader().getLectorsBySubject(state.subjects[i]) {
+							state.lectorsMap.put(state.subjects[i], it)
+							counter += 1
+							if(counter == state.subjects.size) {
+								setState {}
+								call()
+							}
+						}
+					}
+				}
             }
         }
     }

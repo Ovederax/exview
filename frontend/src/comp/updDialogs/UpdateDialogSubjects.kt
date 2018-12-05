@@ -50,7 +50,7 @@ class UpdateDialogSubjects: RComponent<UpdateDialogSubjects.Props, UpdateDialogS
     override fun RBuilder.render() {
 		div {
             a("#updSubjects_" + props.num.toString()) {
-                +"Просмотр"
+                +"Изменить"
             }
             div("modalDialog") {
                 attrs["id"] = "updSubjects_" + props.num.toString()
@@ -62,7 +62,7 @@ class UpdateDialogSubjects: RComponent<UpdateDialogSubjects.Props, UpdateDialogS
 						}
 					}
                     h3 { +"Предметы преподователя" }
-					table {
+					table { tbody {
 						for(i in 0..state.updateList.size-1) {
 							tr {
 								td {
@@ -79,7 +79,7 @@ class UpdateDialogSubjects: RComponent<UpdateDialogSubjects.Props, UpdateDialogS
 								}
 							}
 						}
-					}
+					}}
 					h4 { +"Доступно для добавления" }
 					for(i in 0..props.allSubjects.size-1) {
 						var toDraw = true
@@ -90,20 +90,22 @@ class UpdateDialogSubjects: RComponent<UpdateDialogSubjects.Props, UpdateDialogS
 							}	
 						}
 						if(toDraw) {
-							tr {
-								td {
-									+props.allSubjects[i].name
-								}
-								td {
-									button {
-										+"+"
-										attrs.onClickFunction = {
-											state.updateList.add(props.allSubjects[i])
-											setState{}
+							table { tbody {
+								tr {
+									td {
+										+props.allSubjects[i].name
+									}
+									td {
+										button {
+											+"+"
+											attrs.onClickFunction = {
+												state.updateList.add(props.allSubjects[i])
+												setState{}
+											}
 										}
 									}
 								}
-							}
+							}}
 						}
 					}
 					p {

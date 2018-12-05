@@ -16,9 +16,9 @@ data class Cathedra(var name: String = "") {
     var lectors: MutableSet<Lector> = HashSet()
 
     @OneToMany//(orphanRemoval = false, fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
-    var subject: MutableSet<Subject> = HashSet()
+    var subjects: MutableSet<Subject> = HashSet()
 
     @OneToMany//(orphanRemoval = false, fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
-    var auditorium: MutableSet<Auditorium> = HashSet()
+    var auditoriums: MutableSet<Auditorium> = HashSet()
 
 }

@@ -34,7 +34,8 @@ class Loader {
 		val url = cathedra._links.subjects?.href
 		if(url != null) {
 			client.fetch(url) { e ->
-				val list = JSON.parse<List<JsonSubject>>(e)
+				val embed = JSON.parse<Embedded<JsonSubjects>>(e)
+				val list = embed._embedded?.subjects?.toList() ?: ArrayList()
 				call(list)
 			} 
 		} else {
@@ -42,6 +43,44 @@ class Loader {
 		}
 	}
 	
+	fun getLectorsByCathedra(cathedra: JsonCathedra, call: (List<JsonLector>) -> Unit) {
+		val url = cathedra._links.lectors?.href
+		if(url != null) {
+			client.fetch(url) { e ->
+				val embed = JSON.parse<Embedded<JsonLectors>>(e)
+				val list = embed._embedded?.lectors?.toList() ?: ArrayList()
+				call(list)
+			} 
+		} else {
+			call(ArrayList())
+		}
+	}
+	
+	fun getLectorsBySubject(subject: JsonSubject, call: (List<JsonLector>) -> Unit) {
+		val url = subject._links.lectors?.href
+		if(url != null) {
+			client.fetch(url) { e ->
+				val embed = JSON.parse<Embedded<JsonLectors>>(e)
+				val list = embed._embedded?.lectors?.toList() ?: ArrayList()
+				call(list)
+			} 
+		} else {
+			call(ArrayList())
+		}
+	}
+	
+	fun getStudentGroupsBySubject(subject: JsonSubject, call: (List<JsonStudentGroup>) -> Unit) {
+		/*val url = cathedra._links.lectors?.href
+		if(url != null) {
+			client.fetch(url) { e ->
+				val embed = JSON.parse<Embedded<JsonLectors>>(e)
+				val list = embed._embedded?.lectors?.toList() ?: ArrayList()
+				call(list)
+			} 
+		} else {
+			call(ArrayList())
+		}*/
+	}
 	fun loadAllSubjects(call: (List<JsonSubject>) -> Unit) {
 		val url = url("subjects")
 		if(url != null) {
@@ -112,7 +151,7 @@ class Loader {
 	// 2 Таблица Группы
 	// Мне нужно устанавливать связки группа-предмет-преподователь для сессионных предметов.
 	
-		fun getAllSessionSubject(call: (List<JsonSessionSubject>) -> Unit) {
+	fun getAllSessionSubject(call: (List<JsonSessionSubject>) -> Unit) {
 		val url = url("sessionSubjects")
 		client.fetch(url) { e ->
 			val embed = JSON.parse<Embedded<JsonSessionSubjects>>(e)
@@ -121,26 +160,92 @@ class Loader {
 		} 
 	}
 	
-	// 2.1) Получить список преподавателей по предмету
-	// Входной аргумент – JsonSubject
-	// Выход – List<JsonLector>
-	fun getLectorsBySubject(subject: JsonSubject, call: (List<JsonLector>) -> Unit) {
-		val url = subject._links.lectors?.href
+	fun getSessionSubjectByGroup(group: JsonStudentGroup, call: (List<JsonSessionSubject>) -> Unit) {
+		val url = group._links.sessionSubjects?.href
 		if(url != null) {
 			client.fetch(url) { e ->
-				val list = JSON.parse<List<JsonLector>>(e)
+				val embed = JSON.parse<Embedded<JsonSessionSubjects>>(e)
+				val list = embed._embedded?.sessionSubjects?.toList() ?: ArrayList()
 				call(list)
-			}	
-		}else {
+			} 
+		} else {
 			call(ArrayList())
 		}
 	}
 	
+	fun getPojoSessionSubject(subject: JsonSessionSubject, call: (PojoSessionSubject) -> Unit) {
+		var counter = 0
+		var groupName: String = ""
+		var subjectName: String = ""
+		var lectorName: String = ""
+		var auditorium: String = ""
+		var date: Int = -1
+		val pojo = PojoSessionSubject(groupName, subjectName, lectorName, auditorium, date)
+		
+		var url = subject._links.studentGroup?.href
+		if(url != null) {
+			Client().fetch(url) { e ->
+				val item = JSON.parse<JsonStudentGroup>(e)
+				++counter
+				pojo.groupName = item.name
+				if(counter == 3) {
+					call(pojo)
+				}
+			}
+		} else {
+			++counter
+		}
+		
+		url = subject._links.subject?.href
+		if(url != null) {
+			Client().fetch(url) { e ->
+				val item = JSON.parse<JsonSubject>(e)
+				pojo.subjectName = item.name
+				++counter
+				if(counter == 3) {
+					call(pojo)
+				}
+			}
+		} else {
+			++counter
+		}	
+		
+		url = subject._links.lector?.href
+		if(url != null) {
+			Client().fetch(url) { e ->
+				val item = JSON.parse<JsonLector>(e)
+				pojo.lectorName = item.name
+				++counter
+				if(counter == 3) {
+					call(pojo)
+				}
+			}
+		} else {
+			++counter
+			if(counter == 3) {
+				call(pojo)
+			}
+		}	
+	}
 	// 2.2) При отправке мной группы, предмета,
 	// преподавателя нужно забить данные в таблицу LectorSubjectGroupsRepo
 	// Mapping  «/createSessionSubject »
 	// Входной аргумент – PairGroupSubjectLector
 	fun createSessionSubject(pair: PairGroupSubjectLector, call: () -> Unit = {}) {
+		val url = url("createSessionSubject")
+		client.post(url, JSON.stringify(pair)) { e ->
+			call()
+        }
+	}
+	
+	fun editSessionSubject(pair: PairGroupSubjectLector, call: () -> Unit = {}) {
+		val url = url("createSessionSubject")
+		client.post(url, JSON.stringify(pair)) { e ->
+			call()
+        }
+	}
+	
+	fun deleteSessionSubject(pair: PairGroupSubjectLector, call: () -> Unit = {}) {
 		val url = url("createSessionSubject")
 		client.post(url, JSON.stringify(pair)) { e ->
 			call()

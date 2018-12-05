@@ -13,8 +13,7 @@ interface JsonCathedras {
 
 class CathedraLinks{
     val self: Href?=null
-    val auditorium: Href?=null
+    val auditoriums: Href?=null
 	val subjects: Href?=null
-	//val facultets: Href?=null
     val lectors: Href?=null
 }

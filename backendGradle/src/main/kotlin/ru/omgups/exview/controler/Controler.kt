@@ -54,11 +54,11 @@ class Controler {
             method = [(RequestMethod.POST)],
             headers = ["Accept=application/json"])
     fun createSessionSubjec(@RequestBody pairGroupSubjectLector: PairGroupSubjectLector) {
-        var lectorId = pairGroupSubjectLector.lector._links.self?.href?.substringAfterLast("/")?.toLong()
-        var subjectId = pairGroupSubjectLector.subject._links.self?.href?.substringAfterLast("/")?.toLong()
-        var groupId = pairGroupSubjectLector.group._links.self?.href?.substringAfterLast("/")?.toLong()
+        val lectorId = pairGroupSubjectLector.lector._links.self?.href?.substringAfterLast("/")?.toLong()
+        val subjectId = pairGroupSubjectLector.subject._links.self?.href?.substringAfterLast("/")?.toLong()
+        val groupId = pairGroupSubjectLector.group._links.self?.href?.substringAfterLast("/")?.toLong()
         if (lectorId != null && groupId != null && subjectId != null) {
-                    sessionServis.createSessionSubjec(lectorId, subjectId, groupId)
+            sessionServis.createSessionSubjec(lectorId, subjectId, groupId)
         }
     }
 

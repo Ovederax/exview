@@ -1,33 +1,64 @@
 package comp.items
 
 import kotlinx.html.js.onClickFunction
-import model.JsonSubject
-import react.RBuilder
-import react.RComponent
-import react.RProps
-import react.RState
-import react.dom.button
-import react.dom.td
-import react.dom.tr
+import model.*
+import react.*
+import react.dom.*
+import rest.*
 
-class Subject: RComponent<Subject.Props, RState>(){
-    interface Props: RProps {
+class Subject: RComponent<Subject.Props, Subject.State>(){
+	interface Props: RProps {
         var jsonSubject: JsonSubject
         var key:String
         var onDelete:()->Unit
 		var num: Int
     }
-    override fun RBuilder.render() {
+    
+	interface State: RState {
+		var lectors: List<JsonLector>
+		//var studentGroups: List<JsonStudentGroup>
+	}
+	
+	init {
+		//state.subjects = ArrayList()
+		state.lectors = ArrayList()
+	}
+	
+	override fun componentDidMount() {
+		Loader().getLectorsBySubject(props.jsonSubject) { lectors ->
+			state.lectors = lectors
+			setState{}
+		}
+	}
+	
+	override fun RBuilder.render() {
         tr {
             td { +props.num.toString() }
             td { +props.jsonSubject.name }
 			td {
-                button {
-                    attrs { onClickFunction = {
-                            +props.jsonSubject._links.lectors!!.href
-                        }}
-                    +"Просмотр"
-                }
+				div {
+					a("#showLectors_"+props.num.toString()) {
+						+"Просмотр"
+					}
+				}
+				div("modalDialog") {
+					attrs["id"] = "showLectors_"+props.num.toString()
+					div {
+						p{ strong {
+							+"Лекторы, ведущие предмет \"${props.jsonSubject.name}\""
+						}}
+						a("#", classes = "close") { 
+							+"X"
+						}
+						table {
+							for(i in 0..state.lectors.size-1) {
+								tr {
+									+state.lectors[i].name
+								}
+							}
+						}
+					}
+				}	 
             }
             td {
                 button {

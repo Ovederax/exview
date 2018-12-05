@@ -36,7 +36,7 @@ class UpdateDialogCathedras: RComponent<UpdateDialogCathedras.Props, RState>() {
     override fun RBuilder.render() {
         div {
             a("#updCathedra_" + props.num.toString()) {
-                +"Просмотр"
+                +"Изменить"
             }
             div("modalDialog") {
                 attrs["id"] = "updCathedra_" + props.num.toString()

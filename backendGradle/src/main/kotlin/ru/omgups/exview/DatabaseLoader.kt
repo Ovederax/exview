@@ -49,7 +49,7 @@ class DatabaseLoader() : CommandLineRunner {
 
         val cath1 = Cathedra("АиСУ")
         val cath2 = Cathedra("Автоматика и телемеханика")
-        val cath3 = Cathedra("Безопастность жихнедейтельности и экология")
+        val cath3 = Cathedra("Безопастность жизнедейтельности и экология")
         val cath4 = Cathedra("Вагоны и вагонное хозяйство")
         val cath5 = Cathedra("Высшая математика")
         val cath6 = Cathedra("Информатика, прикладная математика и механика")
@@ -65,7 +65,7 @@ class DatabaseLoader() : CommandLineRunner {
         subjectRepo.saveAll(arrayListOf(subj1, subj2, subj3, subj4, subj5, subj6, subj7))
 
         val lector1 = Lector("Иванов Иван Иванович")  //13
-        val lector2 = Lector("Степаов Степан Степанович")  //14
+        val lector2 = Lector("Степанов Степан Степанович")  //14
         val lector3 = Lector("Михалков Михаил Михоилович")  //15
         val lector4 = Lector("Алексанров Александр Александрович")  //16
         lectorRepo.saveAll(arrayListOf(lector1, lector2, lector3, lector4))
@@ -85,24 +85,36 @@ class DatabaseLoader() : CommandLineRunner {
         lector3.setCathedra(cath1)
 
         val group1 = StudentsGroup("11a")
-        studentsGroupRepo.save(group1)
-        studentsGroupRepo.save(StudentsGroup("11b"))
-        studentsGroupRepo.save(StudentsGroup("11c"))
+        val group2 = StudentsGroup("11b")
+        val group3 = StudentsGroup("11c")
+        studentsGroupRepo.saveAll(arrayListOf(group1,group2,group3))
         studentsGroupRepo.save(StudentsGroup("11d"))
         studentsGroupRepo.save(StudentsGroup("11e"))
         studentsGroupRepo.save(StudentsGroup("11f"))
         studentsGroupRepo.save(StudentsGroup("11g"))
 
         val l1 = SessionSubject()
-        sessionSubjectGroupRepo.save(l1)
+        val l2 = SessionSubject()
+        val l3 = SessionSubject()
+        sessionSubjectGroupRepo.saveAll(arrayListOf(l1,l2,l3))
 
         l1.setLector(lector1)
         l1.setStudentGroup(group1)
         l1.setSubject(subj1)
 
+        l2.setLector(lector2)
+        l2.setStudentGroup(group2)
+        l2.setSubject(subj2)
+
+        l3.setLector(lector3)
+        l3.setStudentGroup(group3)
+        l3.setSubject(subj3)
+
         cathedraRepo.saveAll(arrayListOf(cath1, cath2, cath3, cath4, cath5, cath6))
         lectorRepo.saveAll(arrayListOf(lector1, lector2, lector3, lector4))
         subjectRepo.saveAll(arrayListOf(subj1, subj2, subj3, subj4, subj5, subj6, subj7))
-        sessionSubjectGroupRepo.save(l1)
+        sessionSubjectGroupRepo.saveAll(arrayListOf(l1,l2,l3))
+        studentsGroupRepo.saveAll(arrayListOf(group1,group2,group3))
+
     }
 }

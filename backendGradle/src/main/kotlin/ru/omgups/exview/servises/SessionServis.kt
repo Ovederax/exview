@@ -43,8 +43,8 @@ class SessionServis {
         val lector: Lector? = em.find(Lector::class.java, lectorId)
         val subject: Subject? = em.find(Subject::class.java, subjectId)
         val studentGroup: StudentsGroup? = em.find(StudentsGroup::class.java, groupId)
-
-        if (lector != null && subject != null && studentGroup != null) { // Я хз заработает он или нет
+        
+        if (lector != null && subject != null && studentGroup != null) {
             sessionSubject.setLector(lector)
             sessionSubject.setSubject(subject)
             sessionSubject.setStudentGroup(studentGroup)

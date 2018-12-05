@@ -13,10 +13,9 @@ interface JsonStudentGroups {
     val studentsGroups: Array<JsonStudentGroup>
 }
 
-class StudentGroupLinks{
+class StudentGroupLinks {
     val self: Href?=null
-    val auditorium: Href?=null
-	val subjects: Href?=null
-	val facultets: Href?=null
-    val lectors: Href?=null
+    val studentsGroup: Href?=null
+    val sessionSubjects: Href?=null
+
 }
