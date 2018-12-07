@@ -9,9 +9,6 @@ data class Cathedra(var name: String = "") {
     @GeneratedValue(strategy = GenerationType.AUTO)
     var id: Long = 0
 
-    //@ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
-    //var facultet: Facultet = Facultet()
-
     @OneToMany//(orphanRemoval = false, fetch = FetchType.LAZY)//, cascade = [CascadeType.ALL])
     var lectors: MutableSet<Lector> = HashSet()
 

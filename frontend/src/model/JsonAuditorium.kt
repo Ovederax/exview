@@ -1,13 +1,20 @@
 package model
 
+import rest.Href
 import rest.Links
 
 class JsonAuditorium (
-        val num: Long = 0,
-        val _links: Links = Links()) {
+        val name: String = "",
+        val _links: AuditoriumLinks = AuditoriumLinks()) {
+}
 
-    /*companion object {
-        fun fromPropsArray(auditorium: Array<String>): JsonLector =
-                JsonLector(lectors[0])
-    }*/
+interface JsonAuditoriums {
+    val auditoriums: Array<JsonAuditorium>
+}
+
+class AuditoriumLinks{
+    val self: Href?=null
+    //val auditoriums: Href?=null
+    val sessionSubjects: Href?=null
+    //val lectors: Href?=null
 }

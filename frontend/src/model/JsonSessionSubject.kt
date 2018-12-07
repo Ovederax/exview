@@ -14,7 +14,7 @@ interface JsonSessionSubjects {
 class SessionSubjectLinks {
 	var self: Href? = null
 	var sessionSubject: Href? = null
-	var studentGroup: Href? = null
+	var studentsGroup: Href? = null
 	var subject: Href? = null
 	var lector: Href? = null
 }

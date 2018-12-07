@@ -43,7 +43,7 @@ class SessionServis {
         val lector: Lector? = em.find(Lector::class.java, lectorId)
         val subject: Subject? = em.find(Subject::class.java, subjectId)
         val studentGroup: StudentsGroup? = em.find(StudentsGroup::class.java, groupId)
-        
+
         if (lector != null && subject != null && studentGroup != null) {
             sessionSubject.setLector(lector)
             sessionSubject.setSubject(subject)
@@ -52,5 +52,32 @@ class SessionServis {
             em.flush()
         }
     }
+    fun refreshSessionSubjec(lectorId: Long, subjectId: Long, groupId: Long) {
+        val sessionSubject = SessionSubject()
+        val lector: Lector? = em.find(Lector::class.java, lectorId)
+        val subject: Subject? = em.find(Subject::class.java, subjectId)
+        val studentGroup: StudentsGroup? = em.find(StudentsGroup::class.java, groupId)
 
+        if (lector != null && subject != null && studentGroup != null) {
+            sessionSubject.setLector(lector)
+            sessionSubject.setSubject(subject)
+            sessionSubject.setStudentGroup(studentGroup)
+            sessionSubjectRepo.save(sessionSubject)
+            em.flush()
+        }
+    }
+    fun deleteSessionSubjec(lectorId: Long, subjectId: Long, groupId: Long) {
+        val sessionSubject = SessionSubject()
+        val lector: Lector? = em.find(Lector::class.java, lectorId)
+        val subject: Subject? = em.find(Subject::class.java, subjectId)
+        val studentGroup: StudentsGroup? = em.find(StudentsGroup::class.java, groupId)
+
+        if (lector != null && subject != null && studentGroup != null) {
+            sessionSubject.setLector(lector)
+            sessionSubject.setSubject(subject)
+            sessionSubject.setStudentGroup(studentGroup)
+            sessionSubjectRepo.save(sessionSubject)
+            em.flush()
+        }
+    }
 }

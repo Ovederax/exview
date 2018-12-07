@@ -2,9 +2,8 @@ package comp.infoTables
 
 import comp.items.SessionSubject
 import kotlinx.html.js.onClickFunction
-import model.JsonSessionSubject
-import model.JsonSessionSubjects
-import org.w3c.dom.HTMLInputElement
+import model.*
+import org.w3c.dom.*
 import org.w3c.dom.events.Event
 import react.*
 import react.dom.*

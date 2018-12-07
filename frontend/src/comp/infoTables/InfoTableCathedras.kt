@@ -23,7 +23,6 @@ class InfoTableCathedras : RComponent<InfoTableCathedras.Props, InfoTableCathedr
 
     interface Props : RProps {
         var path: String
-        var gotoSubPage : ()->Unit
         var pageSize: Int
     }
 
@@ -61,7 +60,7 @@ class InfoTableCathedras : RComponent<InfoTableCathedras.Props, InfoTableCathedr
                 tr {
                     th { +"N" }
                     th { +"Название" }
-                    th { +"Аудитории" }
+                    //th { +"Аудитории" }
                     th { +"Предметы" }
                     th { +"Преподователи" }
                     th { +"Удалить" }
@@ -159,7 +158,6 @@ class InfoTableCathedras : RComponent<InfoTableCathedras.Props, InfoTableCathedr
 
 fun RBuilder.InfoTableCathedras(path: String, pageSize: Int, gotoSubPage : ()->Unit) = child(InfoTableCathedras::class) {
     attrs.path = path
-    attrs.gotoSubPage = gotoSubPage
     attrs.pageSize = pageSize
 }
 

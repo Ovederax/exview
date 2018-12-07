@@ -1,8 +1,11 @@
 package rest
 
+import comp.items.SessionSubject
 import rest.*
 import model.*
 
+// добавить!!!
+// /refreshSessionSubject
 
 /**
 	Общее строение
@@ -26,7 +29,24 @@ class Loader {
 			call(cathedras)
         }  
     }
-	
+
+	fun loadAuditoriumList(call: (List<JsonAuditorium>) -> Unit) {
+		val url: String = url("auditoriums")
+		client.fetch(url) { e ->
+			val embed = JSON.parse<Embedded<JsonAuditoriums>>(e)
+			val auditoriums = embed._embedded?.auditoriums?.toList() ?: ArrayList()
+			call(auditoriums)
+		}
+	}
+
+	fun loadGroupList(call: (List<JsonStudentGroup>) -> Unit) {
+		val url: String = url("studentsGroups")
+		client.fetch(url) { e ->
+			val embed = JSON.parse<Embedded<JsonStudentGroups>>(e)
+			val groups = embed._embedded?.studentsGroups?.toList() ?: ArrayList()
+			call(groups)
+		}
+	}
 	//1.1 Получить список предметов по кафедре
 	// Входной аргумент – JsonCathedra
 	// Выход – List<JsonSubject> 
@@ -49,6 +69,19 @@ class Loader {
 			client.fetch(url) { e ->
 				val embed = JSON.parse<Embedded<JsonLectors>>(e)
 				val list = embed._embedded?.lectors?.toList() ?: ArrayList()
+				call(list)
+			} 
+		} else {
+			call(ArrayList())
+		}
+	}
+	
+	fun getAuditoriumsByCathedra(cathedra: JsonCathedra, call: (List<JsonAuditorium>) -> Unit) {
+		val url = cathedra._links.auditoriums?.href
+		if(url != null) {
+			client.fetch(url) { e ->
+				val embed = JSON.parse<Embedded<JsonAuditoriums>>(e)
+				val list = embed._embedded?.auditoriums?.toList() ?: ArrayList()
 				call(list)
 			} 
 		} else {
@@ -172,6 +205,19 @@ class Loader {
 			call(ArrayList())
 		}
 	}
+
+	fun getSessionSubjectByAuditorium(jsonAuditorium: JsonAuditorium, call: (List<JsonSessionSubject>) -> Unit) {
+		val url = jsonAuditorium._links.sessionSubjects?.href
+		if(url != null) {
+			client.fetch(url) { e ->
+				val embed = JSON.parse<Embedded<JsonSessionSubjects>>(e)
+				val list = embed._embedded?.sessionSubjects?.toList() ?: ArrayList()
+				call(list)
+			}
+		} else {
+			call(ArrayList())
+		}
+	}
 	
 	fun getPojoSessionSubject(subject: JsonSessionSubject, call: (PojoSessionSubject) -> Unit) {
 		var counter = 0
@@ -182,7 +228,7 @@ class Loader {
 		var date: Int = -1
 		val pojo = PojoSessionSubject(groupName, subjectName, lectorName, auditorium, date)
 		
-		var url = subject._links.studentGroup?.href
+		var url = subject._links.studentsGroup?.href
 		if(url != null) {
 			Client().fetch(url) { e ->
 				val item = JSON.parse<JsonStudentGroup>(e)
@@ -262,7 +308,6 @@ class Loader {
 			call(list)
         } 
 	}
-		
 }
 
 

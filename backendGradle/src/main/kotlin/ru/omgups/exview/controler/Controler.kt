@@ -53,10 +53,32 @@ class Controler {
     @RequestMapping(value = ["/createSessionSubject"],
             method = [(RequestMethod.POST)],
             headers = ["Accept=application/json"])
-    fun createSessionSubjec(@RequestBody pairGroupSubjectLector: PairGroupSubjectLector) {
-        val lectorId = pairGroupSubjectLector.lector._links.self?.href?.substringAfterLast("/")?.toLong()
-        val subjectId = pairGroupSubjectLector.subject._links.self?.href?.substringAfterLast("/")?.toLong()
-        val groupId = pairGroupSubjectLector.group._links.self?.href?.substringAfterLast("/")?.toLong()
+    fun createSessionSubjec(@RequestBody item: PairGroupSubjectLector) {
+        val lectorId = item.lector._links.self?.href?.substringAfterLast("/")?.toLong()
+        val subjectId = item.subject._links.self?.href?.substringAfterLast("/")?.toLong()
+        val groupId = item.group._links.self?.href?.substringAfterLast("/")?.toLong()
+        if (lectorId != null && groupId != null && subjectId != null) {
+            sessionServis.createSessionSubjec(lectorId, subjectId, groupId)
+        }
+    }
+    @RequestMapping(value = ["/refreshSessionSubject"],
+            method = [(RequestMethod.POST)],
+            headers = ["Accept=application/json"])
+    fun refreshSessionSubject(@RequestBody item: PairGroupSubjectLector) {
+        val lectorId  = item.lector._links.self?.href?.substringAfterLast("/")?.toLong()
+        val subjectId = item.subject._links.self?.href?.substringAfterLast("/")?.toLong()
+        val groupId   = item.group._links.self?.href?.substringAfterLast("/")?.toLong()
+        if (lectorId != null && groupId != null && subjectId != null) {
+            sessionServis.createSessionSubjec(lectorId, subjectId, groupId)
+        }
+    }
+    @RequestMapping(value = ["/deleteSessionSubject"],
+            method = [(RequestMethod.POST)],
+            headers = ["Accept=application/json"])
+    fun deleteSessionSubject(@RequestBody item: PairGroupSubjectLector) {
+        val lectorId  = item.lector._links.self?.href?.substringAfterLast("/")?.toLong()
+        val subjectId = item.subject._links.self?.href?.substringAfterLast("/")?.toLong()
+        val groupId   = item.group._links.self?.href?.substringAfterLast("/")?.toLong()
         if (lectorId != null && groupId != null && subjectId != null) {
             sessionServis.createSessionSubjec(lectorId, subjectId, groupId)
         }

@@ -60,14 +60,14 @@ class Subject: RComponent<Subject.Props, Subject.State>(){
 					}
 				}	 
             }
-            td {
+            /*td {
                 button {
                     attrs { onClickFunction = {
                             +props.jsonSubject._links.studentGroup!!.href
                         }}
                     +"Просмотр"
                 }
-            }
+            }*/
 			
 			
 			td {

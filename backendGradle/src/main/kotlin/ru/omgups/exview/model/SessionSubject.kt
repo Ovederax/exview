@@ -9,7 +9,10 @@ class SessionSubject {
     @GeneratedValue(strategy= GenerationType.AUTO)
     var id: Long = 0
 
+    @ManyToOne
+    var auditorium: Auditorium? = null
 
+    var date: Int = -1
 
     @ManyToOne()
     var lector: Lector? = null

@@ -61,7 +61,7 @@ class InfoTableSubjects : RComponent<InfoTableSubjects.Props, InfoTableSubjects.
                     th { +"N" }
                     th { +"Название" }
                     th { +"Преподователи" }
-                    th { +"Группы" }
+                    //th { +"Группы" }
                     th { +"Удалить" }
                 }
                 var i = 1

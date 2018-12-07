@@ -12,6 +12,9 @@ data class Auditorium (var name: String = ""){
     @GeneratedValue(strategy = GenerationType.AUTO)
     var id: Long = 0
 
-//    @ManyToOne(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
-//    var cathedra: Cathedra = Cathedra()
+    @OneToMany
+    var sessionSubjects: MutableSet<SessionSubject> = HashSet()
+
+    @ManyToOne
+    var cathedra: Cathedra? = null
 }

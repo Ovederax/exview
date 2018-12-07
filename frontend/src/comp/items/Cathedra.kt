@@ -41,14 +41,14 @@ class Cathedra: RComponent<Cathedra.Props, Cathedra.State>(){
         tr {
             td { +props.num.toString() }
             td { +props.jsonCathedra.name }
-            td {
+            /*td {
                 button {
                     attrs { onClickFunction = {
                             //+props.jsonCathedra._links.auditoriums!!.href
                         }}
                     +"Просмотр"
                 }
-            }
+            }*/
 			td {
 				//+props.jsonCathedra._links.subjects!!.href
 				div {

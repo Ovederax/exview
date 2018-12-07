@@ -34,7 +34,7 @@ class SessionSubjectAddDialog : RComponent<SessionSubjectAddDialog.Props, Sessio
 		Loader().getSessionSubjectByGroup(props.group) {
 			state.sessionSubjects = it
 			state.pojoSessionSubjects = HashMap()
-			setState {}
+			//setState {}
 			var counter = 0
 			val size = state.sessionSubjects.size-1
 			for(i in 0..size) {
