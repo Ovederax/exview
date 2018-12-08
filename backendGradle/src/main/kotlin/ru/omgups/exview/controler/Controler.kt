@@ -7,6 +7,7 @@ import ru.omgups.exview.servises.SessionServis
 import ru.omgups.exview.jsonmodel.PairGroupSubjectLector
 import ru.omgups.exview.jsonmodel.PairLectorCathedra
 import ru.omgups.exview.jsonmodel.PairLectorSubjects
+import ru.omgups.exview.jsonmodel.UpdateSessionSubject
 
 @RestController
 class Controler {
@@ -64,24 +65,31 @@ class Controler {
     @RequestMapping(value = ["/refreshSessionSubject"],
             method = [(RequestMethod.POST)],
             headers = ["Accept=application/json"])
-    fun refreshSessionSubject(@RequestBody item: PairGroupSubjectLector) {
-        val lectorId  = item.lector._links.self?.href?.substringAfterLast("/")?.toLong()
+    fun refreshSessionSubject(@RequestBody item: UpdateSessionSubject) {
+        val id  = item.link.href.substringAfterLast("/").toLong()
+        val lectorId = item.lector._links.self?.href?.substringAfterLast("/")?.toLong()
         val subjectId = item.subject._links.self?.href?.substringAfterLast("/")?.toLong()
-        val groupId   = item.group._links.self?.href?.substringAfterLast("/")?.toLong()
-        if (lectorId != null && groupId != null && subjectId != null) {
-            sessionServis.createSessionSubjec(lectorId, subjectId, groupId)
+        val groupId = item.group._links.self?.href?.substringAfterLast("/")?.toLong()
+        val auditoriumId = item.auditorium._links.self?.href?.substringAfterLast("/")?.toLong()
+        if (lectorId != null && groupId != null && subjectId != null && auditoriumId != null) {
+            sessionServis.refreshSessionSubjec(id, lectorId, subjectId, groupId, auditoriumId, item.date)
         }
     }
+
+    @RequestMapping(value = ["/freeSessionSubject"],
+            method = [(RequestMethod.POST)],
+            headers = ["Accept=application/json"])
+    fun freeSessionSubject(@RequestBody item: UpdateSessionSubject) {
+        val id  = item.link.href.substringAfterLast("/").toLong()
+        sessionServis.freeSessionSubjec(id)
+    }
+
     @RequestMapping(value = ["/deleteSessionSubject"],
             method = [(RequestMethod.POST)],
             headers = ["Accept=application/json"])
-    fun deleteSessionSubject(@RequestBody item: PairGroupSubjectLector) {
-        val lectorId  = item.lector._links.self?.href?.substringAfterLast("/")?.toLong()
-        val subjectId = item.subject._links.self?.href?.substringAfterLast("/")?.toLong()
-        val groupId   = item.group._links.self?.href?.substringAfterLast("/")?.toLong()
-        if (lectorId != null && groupId != null && subjectId != null) {
-            sessionServis.createSessionSubjec(lectorId, subjectId, groupId)
-        }
+    fun deleteSessionSubject(@RequestBody item: UpdateSessionSubject) {
+        val id  = item.link.href.substringAfterLast("/").toLong()
+        sessionServis.deleteSessionSubjec(id)
     }
 
 }

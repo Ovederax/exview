@@ -15,6 +15,7 @@ class SessionSubjectLinks {
 	var self: Href? = null
 	var sessionSubject: Href? = null
 	var studentsGroup: Href? = null
+	var auditorium: Href? = null
 	var subject: Href? = null
 	var lector: Href? = null
 }

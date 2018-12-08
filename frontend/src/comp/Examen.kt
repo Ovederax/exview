@@ -1,7 +1,6 @@
 package comp
 
-import comp.items.ExamenByAuditoriumEdit
-import comp.items.ExamenByGroupEdit
+import comp.items.*
 import kotlinx.html.js.onClickFunction
 import react.*
 import react.dom.*
@@ -36,6 +35,7 @@ class Examen: RComponent<Examen.Props, Examen.State>() {
 		var studentGroups: List<JsonStudentGroup>
 		var auditoriums: List<JsonAuditorium>
 		var type: TypeShow
+		var subjectsMap: MutableMap<JsonSessionSubject, JsonSubject>
 	}
 	enum class TypeShow {
         STUDENT_GROUP, AUDITORIUM
@@ -46,21 +46,6 @@ class Examen: RComponent<Examen.Props, Examen.State>() {
     }
 	
 	private fun loadInfo() {
-		/*Loader().loadAllSubjects() {
-			state.subjects = it
-			var counter = 0
-			var size = state.subjects.size-1
-			for(i in 0..size) {
-				Loader().getLectorsBySubject(state.subjects[i]) {
-					state.lectorsMap.put(state.subjects[i], it)
-					counter += 1
-					if(counter == state.subjects.size) {
-						setState {}
-						call()
-					}
-				}
-			}
-		}*/
 		Loader().getAllSessionSubject {
 			state.sessionSubjects = it
 			Loader().loadAuditoriumList {
@@ -84,7 +69,16 @@ class Examen: RComponent<Examen.Props, Examen.State>() {
 			}
 		}
 	}
-    
+    fun onDelete(pojo: UpdateSessionSubject) {
+		Loader().freeSessionSubject(pojo) {
+			loadInfo()
+		}
+	}
+	fun onUpdate(pojo: UpdateSessionSubject){
+		Loader().refreshSessionSubject(pojo) {
+			loadInfo()
+		}
+	}
 	override fun RBuilder.render() {
 		state.sessionSubjectsByGroup		= HashMap()
 		state.sessionSubjectsByAuditorium	= HashMap()
@@ -116,12 +110,11 @@ class Examen: RComponent<Examen.Props, Examen.State>() {
 			}
 		}
         div() {
-			h4 { +"Просмотр календаря экзаменов" }
 			div() {
                 button (classes = "materialBtn") { +"По группе";    	attrs.onClickFunction = { setState { type = TypeShow.STUDENT_GROUP } } }
 				button (classes = "materialBtn") { +"По аудитории";   	attrs.onClickFunction = { setState { type = TypeShow.AUDITORIUM    } } }
 			}
-			br { }
+			div { strong { +"Просмотр календаря экзаменов" } }
             table {
                 tbody {
                     tr {
@@ -131,7 +124,7 @@ class Examen: RComponent<Examen.Props, Examen.State>() {
                             else -> {
                             }
                         }
-                        for(i in 0..30) {
+                        for(i in 7..30) {
                             th { +(i+1).toString() }
                         }
                     }
@@ -139,28 +132,16 @@ class Examen: RComponent<Examen.Props, Examen.State>() {
                         TypeShow.AUDITORIUM -> {
                             var count = 1
                             for(it in state.auditoriums) {
-								
-                                ExamenByAuditoriumEdit(it, count, state.sessionSubjects, state.pojoSessionSubjects)
+								val list = state.sessionSubjectsByAuditorium.get(it.name) ?: ArrayList()
+                                ExamenByAuditoriumEdit(it, count, list, state.pojoSessionSubjects, state.studentGroups, state.sessionSubjects, ::onUpdate, ::onDelete)
                                 ++count
                             }
                         }
                         TypeShow.STUDENT_GROUP -> {
                             var count = 1
                             for(it in state.studentGroups) {
-                                //console.log(it.name)
 								val list = state.sessionSubjectsByGroup.get(it.name) ?: ArrayList()
-								//val list = state.sessionSubjects
-								/*for(it in list) {
-                                    val pojo = state.pojoSessionSubjects.get(it)
-                                    if(pojo != null) {
-                                        console.log(pojo.groupName)
-                                        console.log(pojo.subjectName)
-                                        console.log(pojo.lectorName) 
-                                    }
-									console.log("")
-                                }*/
-								
-                                ExamenByGroupEdit(it, count, list, state.pojoSessionSubjects)
+                                ExamenByGroupEdit(it, count, list, state.pojoSessionSubjects, state.auditoriums, state.sessionSubjects, ::onUpdate, ::onDelete)
                                 ++count
                             }
                         }

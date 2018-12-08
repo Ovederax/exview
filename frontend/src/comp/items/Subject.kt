@@ -50,13 +50,14 @@ class Subject: RComponent<Subject.Props, Subject.State>(){
 						a("#", classes = "close") { 
 							+"X"
 						}
-						table {
+						table { tbody{
+								
 							for(i in 0..state.lectors.size-1) {
 								tr {
-									+state.lectors[i].name
+									td{ +state.lectors[i].name }
 								}
 							}
-						}
+						}}
 					}
 				}	 
             }

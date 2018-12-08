@@ -225,7 +225,7 @@ class Loader {
 		var subjectName: String = ""
 		var lectorName: String = ""
 		var auditorium: String = ""
-		var date: Int = -1
+		var date: Int = subject.date
 		val pojo = PojoSessionSubject(groupName, subjectName, lectorName, auditorium, date)
 		
 		var url = subject._links.studentsGroup?.href
@@ -234,7 +234,23 @@ class Loader {
 				val item = JSON.parse<JsonStudentGroup>(e)
 				++counter
 				pojo.groupName = item.name
-				if(counter == 3) {
+				if(counter == 4) {
+					call(pojo)
+				}
+			}
+		} else {
+			++counter
+		}
+		
+		url = subject._links.auditorium?.href
+		if(url != null) {
+			Client().fetch(url) { e ->
+				if(e != "") {
+					val item = JSON.parse<JsonAuditorium>(e)
+					pojo.auditorium = item.name
+				}
+				++counter
+				if(counter == 4) {
 					call(pojo)
 				}
 			}
@@ -245,10 +261,12 @@ class Loader {
 		url = subject._links.subject?.href
 		if(url != null) {
 			Client().fetch(url) { e ->
-				val item = JSON.parse<JsonSubject>(e)
-				pojo.subjectName = item.name
+				if(e != "") {
+					val item = JSON.parse<JsonSubject>(e)
+					pojo.subjectName = item.name
+				}
 				++counter
-				if(counter == 3) {
+				if(counter == 4) {
 					call(pojo)
 				}
 			}
@@ -262,21 +280,89 @@ class Loader {
 				val item = JSON.parse<JsonLector>(e)
 				pojo.lectorName = item.name
 				++counter
-				if(counter == 3) {
+				if(counter == 4) {
 					call(pojo)
 				}
 			}
 		} else {
 			++counter
-			if(counter == 3) {
+			if(counter == 4) {
 				call(pojo)
 			}
 		}	
 	}
-	// 2.2) При отправке мной группы, предмета,
-	// преподавателя нужно забить данные в таблицу LectorSubjectGroupsRepo
-	// Mapping  «/createSessionSubject »
-	// Входной аргумент – PairGroupSubjectLector
+	
+	fun getUpdateSessionSubject(subject: JsonSessionSubject, call: (UpdateSessionSubject) -> Unit) {
+		var counter = 0
+		
+		var link = subject._links.self ?: Href()
+		val pojo = UpdateSessionSubject(link)
+		pojo.date = subject.date
+		
+		var url = subject._links.studentsGroup?.href
+		if(url != null) {
+			Client().fetch(url) { e ->
+				val item = JSON.parse<JsonStudentGroup>(e)
+				++counter
+				pojo.group = item
+				if(counter == 4) {
+					call(pojo)
+				}
+			}
+		} else {
+			++counter
+		}
+		
+		url = subject._links.auditorium?.href
+		if(url != null) {
+			Client().fetch(url) { e ->
+				if(e != "") {
+					val item = JSON.parse<JsonAuditorium>(e)
+					pojo.auditorium = item
+				}
+				++counter
+				if(counter == 4) {
+					call(pojo)
+				}
+			}
+		} else {
+			++counter
+		}
+		
+		url = subject._links.subject?.href
+		if(url != null) {
+			Client().fetch(url) { e ->
+				if(e != "") {
+					val item = JSON.parse<JsonSubject>(e)
+					pojo.subject = item
+				}
+				++counter
+				if(counter == 4) {
+					call(pojo)
+				}
+			}
+		} else {
+			++counter
+		}	
+		
+		url = subject._links.lector?.href
+		if(url != null) {
+			Client().fetch(url) { e ->
+				val item = JSON.parse<JsonLector>(e)
+				pojo.lector = item
+				++counter
+				if(counter == 4) {
+					call(pojo)
+				}
+			}
+		} else {
+			++counter
+			if(counter == 4) {
+				call(pojo)
+			}
+		}	
+	}
+
 	fun createSessionSubject(pair: PairGroupSubjectLector, call: () -> Unit = {}) {
 		val url = url("createSessionSubject")
 		client.post(url, JSON.stringify(pair)) { e ->
@@ -284,20 +370,26 @@ class Loader {
         }
 	}
 	
-	fun editSessionSubject(pair: PairGroupSubjectLector, call: () -> Unit = {}) {
-		val url = url("createSessionSubject")
+	fun refreshSessionSubject(pair: UpdateSessionSubject, call: () -> Unit = {}) {
+		val url = url("refreshSessionSubject")
 		client.post(url, JSON.stringify(pair)) { e ->
 			call()
         }
 	}
 	
-	fun deleteSessionSubject(pair: PairGroupSubjectLector, call: () -> Unit = {}) {
-		val url = url("createSessionSubject")
+	fun deleteSessionSubject(pair: UpdateSessionSubject, call: () -> Unit = {}) {
+		val url = url("deleteSessionSubject")
 		client.post(url, JSON.stringify(pair)) { e ->
 			call()
         }
 	}
 	
+	fun freeSessionSubject(pair: UpdateSessionSubject, call: () -> Unit = {}) {
+		val url = url("freeSessionSubject")
+		client.post(url, JSON.stringify(pair)) { e ->
+			call()
+        }
+	}
 	// 2.3) Получить список уже настроенных пар Предмет-Преподаватель для группы
 	// Входной аргумент – JsonStudentGroup
 	// Выход – List<PairLectorSubject> 	

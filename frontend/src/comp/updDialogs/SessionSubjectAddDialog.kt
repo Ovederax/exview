@@ -46,6 +46,9 @@ class SessionSubjectAddDialog : RComponent<SessionSubjectAddDialog.Props, Sessio
 					}
 				}
 			}
+			if(size == -1) {
+				setState {}
+			}
 		}
 	}
 	
@@ -196,9 +199,16 @@ class SessionSubjectAddDialog : RComponent<SessionSubjectAddDialog.Props, Sessio
 									tr {
 										td {+item.subjectName}
 										td {+item.lectorName}
+										if(item.date != -1) td {+(item.date.toString()+".1.18")} else td {+"-"}
 										if(item.auditorium != "") td {+item.auditorium} else td {+"-"}
-										if(item.date != -1) td {+item.date.toString()} else td {+"-"}
 										td {button {
+											attrs.onClickFunction = { e->
+												var self = it?._links?.self ?: Href()
+												var obj = UpdateSessionSubject(self)
+												Loader().deleteSessionSubject(obj) {
+													reload() 
+												}
+											}
 											+"Удалить"
 										}}
 									}

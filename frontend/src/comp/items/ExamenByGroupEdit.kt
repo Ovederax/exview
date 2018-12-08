@@ -18,7 +18,11 @@ class ExamenByGroupEdit: RComponent<ExamenByGroupEdit.Props, ExamenByGroupEdit.S
 		// sessionSubjects.groupName == jsonStudentGroup.groupName
 		var sessionSubjects: List<JsonSessionSubject>
 		var pojoSessionSubjects: Map<JsonSessionSubject,PojoSessionSubject>
+		var auditoriums: List<JsonAuditorium>
         var num: Int
+		var allSessionSubjects: List<JsonSessionSubject>
+		var onUpdate: (UpdateSessionSubject)->Unit
+		var onDelete: (UpdateSessionSubject)->Unit
     }
 
     interface State: RState {
@@ -27,6 +31,7 @@ class ExamenByGroupEdit: RComponent<ExamenByGroupEdit.Props, ExamenByGroupEdit.S
 		var selectedDay: Int
 		var sessionSubject: JsonSessionSubject?
 		var selectedSubject: JsonSessionSubject?
+		var auditoriumList: MutableList<JsonAuditorium>
     }
 	
 	init {
@@ -34,29 +39,6 @@ class ExamenByGroupEdit: RComponent<ExamenByGroupEdit.Props, ExamenByGroupEdit.S
 		state.selectedDay = 0
 		state.selectedSubject = null
 	}
-
-    fun reloadData() {
-        /*Loader().getSessionSubjectByGroup(props.jsonStudentGroup)
-        { it ->
-            props.sessionSubjects = it
-            var counter = 0
-            val size = props.sessionSubjects.size-1
-            for(i in 0..size) {
-                Loader().getPojoSessionSubject(props.sessionSubjects[i]) {
-                    props.pojoSessionSubjects.put(props.sessionSubjects[i],it)
-                    counter += 1
-                    if(counter == props.sessionSubjects.size) {
-                        setState {}
-                    }
-                }
-            }
-            setState{}
-        }*/
-    }
-
-    override fun componentDidMount() {
-        reloadData()
-    }
 
 	fun onClick(day: Int) {
 		setState {
@@ -68,6 +50,7 @@ class ExamenByGroupEdit: RComponent<ExamenByGroupEdit.Props, ExamenByGroupEdit.S
 	
     override fun RBuilder.render() {
 		state.sessionSubjectsNoDay = ArrayList()
+		state.auditoriumList = ArrayList()
 		state.sessionSubject = null
 		
 		for(it in props.sessionSubjects) {
@@ -81,31 +64,40 @@ class ExamenByGroupEdit: RComponent<ExamenByGroupEdit.Props, ExamenByGroupEdit.S
 		val insSelectDay = state.sessionSubject
 		tr {
             td { +props.jsonStudentGroup.name }
-            for (i in 0..30) {
-                td {
-					val day = i+1
-					//val id = props.num*100+i
-					a("#editByGroup_" + props.num.toString()) {
-						if(insSelectDay == null) {
-							+"+"
-						}else {
-							+"o"
-						}
-						attrs.onClickFunction = { onClick(day) }
+            for (i in 7..30) {
+				var b = false
+				val day = i+1
+				for(it in props.sessionSubjects) {
+					if(it.date == day) {
+						b = true
 					}
-                }
+				}
+				var cl: String = "exItemGreen"
+				if(b) {
+					cl = "exItemRed"
+				}				    
+				td(classes = cl) {
+					a("#editByGroup_" + props.num.toString()) {
+						+"+"
+						attrs.onClickFunction = { e->
+							//e.preventDefault()
+							onClick(day) 
+							//window.location.href = "#editByGroup_" + props.num.toString()
+						}
+					}
+				}
             }
 		}
 		
 		if(state.showSubDialog) {
-			div("modalDialog") {
+			div("modalDialogSessionSubject") {
 				attrs["id"] = "editByGroup_" + props.num.toString()
 				div {
 					a("#", classes = "close") { +"X" }
 					h2 { +"Назначение сессионных предметов для группы ${props.jsonStudentGroup.name}" }
 					
 					if(insSelectDay != null) {
-						var pojo = props.pojoSessionSubjects.get(insSelectDay) ?: PojoSessionSubject()
+						val pojo = props.pojoSessionSubjects.get(insSelectDay) ?: PojoSessionSubject()
 						table { tbody {
 							tr {
 								td { +"Предмет " }
@@ -116,25 +108,13 @@ class ExamenByGroupEdit: RComponent<ExamenByGroupEdit.Props, ExamenByGroupEdit.S
 										+"Удалить" // 
 										attrs.onClickFunction= { e->
 											e.preventDefault()
-
-											/*if(idSubj!=0 && idLect!=0) {
-												var lectorList = props.lectorsMap.get(state.subjectsToSelect[idSubj-1])
-												if(lectorList != null) {
-													var pair = PairGroupSubjectLector()
-													pair.group = props.group
-													pair.subject = state.subjectsToSelect[idSubj-1]
-													pair.lector = lectorList[idLect-1]
-													Loader().createSessionSubject(pair) {
-														selectSubject.selectedIndex = 0
-														selectLector.selectedIndex = 0
-														reload()
-													}
-												}*/
+											val self = state.sessionSubject?._links?.self ?: Href()
+											val obj = UpdateSessionSubject(self)
+											props.onDelete(obj)
 										}
 									}
 								}
 							}
-							
 							tr {
 								td { +"Лектор" }
 								td { +pojo.lectorName}
@@ -182,27 +162,24 @@ class ExamenByGroupEdit: RComponent<ExamenByGroupEdit.Props, ExamenByGroupEdit.S
 								td {
 									attrs["rowSpan"] = "4"
 									button {
-										+"Создать" // Удалить
+										+"Создать"
 										attrs.onClickFunction= { e->
 											e.preventDefault()
-											var selectSubject = findDOMNode(refs["selectSubject"]) as HTMLSelectElement
+											//нужно назначить аудиторию и день
+											val selectSubject = findDOMNode(refs["selectSubject"]) as HTMLSelectElement
 											val idSubj = selectSubject.selectedIndex
-											var selectLector = findDOMNode(refs["selectLector"]) as HTMLSelectElement
-											val idLect = selectLector.selectedIndex
-
-											if(idSubj!=0 && idLect!=0) {
-												/*var lectorList = props.lectorsMap.get(state.subjectsToSelect[idSubj-1])
-												if(lectorList != null) {
-													var pair = PairGroupSubjectLector()
-													pair.group = props.group
-													pair.subject = state.subjectsToSelect[idSubj-1]
-													pair.lector = lectorList[idLect-1]
-													Loader().createSessionSubject(pair) {
-														selectSubject.selectedIndex = 0
-														selectLector.selectedIndex = 0
-														reload()
-													}
-												}*/
+											
+											val selectAud = findDOMNode(refs["selectAuditorium"]) as HTMLSelectElement
+											val idAud = selectAud.selectedIndex
+											
+											if(idSubj!=0 && idAud!=0) {
+												var subj = state.sessionSubjectsNoDay[idSubj-1]
+												Loader().getUpdateSessionSubject(subj) { item ->
+													item.date = state.selectedDay
+													item.auditorium = state.auditoriumList[idAud-1]
+													props.onUpdate(item)
+												}
+									
 											}
 										}
 									}
@@ -220,28 +197,41 @@ class ExamenByGroupEdit: RComponent<ExamenByGroupEdit.Props, ExamenByGroupEdit.S
 									}									
 								}
 							}
+							val auditoriumList = state.auditoriumList
 							tr {
 								td { +"Аудитория"}
 								td { 
 									select(classes = "selectClasses") {
-									attrs["ref"] = "selectAuditorium"
-									
-									option {
-										+"(пусто)"
-									}
-									/*val sel = state.selectedSubject
-									if(sel != null) {
-										val lectors = props.lectorsMap.get(sel)
-										if(lectors != null) {
-											lectors.map { prop ->
-												option {
-													+prop.name
+										attrs["ref"] = "selectAuditorium"
+										
+										option {
+											+"(пусто)"
+										}
+										
+										props.auditoriums.map { prop ->
+											var show = true
+											for(it in props.allSessionSubjects) {
+												if(it.date == state.selectedDay) {
+													val pojo = props.pojoSessionSubjects.get(it) ?: PojoSessionSubject()
+													if(pojo.auditorium == prop.name) {
+														show = false
+														break
+													}
 												}
 											}
+											if(show) {
+												auditoriumList.add(prop)
+											}
+											
 										}
-									}*/
+										auditoriumList.map { prop ->
+											option {
+												+prop.name
+											}
+										}
 									}
 								}
+									
 							}
 							tr {
 								td { +"Дата" }
@@ -256,23 +246,23 @@ class ExamenByGroupEdit: RComponent<ExamenByGroupEdit.Props, ExamenByGroupEdit.S
 		}
 	}
 }
-//                //props.jsonLector._links.subjects?.href,
-//                UpdateDialogSubjects(props.jsonLector,props.num, props.allSubjects) { it ->
-//                    //добавление предметов лектору
-//                    val pair = PairLectorSubjects()
-//                    pair.lector = props.jsonLector
-//                    pair.subjects = it
-//                    Loader().setSubjectsInLector(pair) {
-//                        reloadData()
 
 
-
-
-
-fun RBuilder.ExamenByGroupEdit(studentGroup: JsonStudentGroup, num: Int, sessionSubjects: List<JsonSessionSubject>,
-	pojoSessionSubjects: Map<JsonSessionSubject, PojoSessionSubject>) = child(ExamenByGroupEdit::class) {
+fun RBuilder.ExamenByGroupEdit(studentGroup: JsonStudentGroup,
+							   num: Int,
+							   sessionSubjects: List<JsonSessionSubject>,
+							   pojoSessionSubjects: Map<JsonSessionSubject, PojoSessionSubject>,
+							   auditoriums: List<JsonAuditorium>,
+							   allSessionSubjects: List<JsonSessionSubject>,
+							   onUpdate: (UpdateSessionSubject)->Unit,
+							   onDelete: (UpdateSessionSubject)->Unit)
+							   = child(ExamenByGroupEdit::class){
     attrs.jsonStudentGroup = studentGroup
     attrs.num = num
     attrs.sessionSubjects = sessionSubjects
     attrs.pojoSessionSubjects = pojoSessionSubjects
+    attrs.auditoriums = auditoriums
+    attrs.allSessionSubjects = allSessionSubjects
+    attrs.onUpdate = onUpdate
+    attrs.onDelete = onDelete
 }

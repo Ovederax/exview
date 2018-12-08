@@ -150,14 +150,17 @@ class DatabaseLoader() : CommandLineRunner {
         sessionSubject1.setLector(lector1)
         sessionSubject1.setStudentGroup(group1)
         sessionSubject1.setSubject(subj1)
+        //sessionSubject1.date = 10
 
         sessionSubject2.setLector(lector2)
         sessionSubject2.setStudentGroup(group2)
         sessionSubject2.setSubject(subj1)
+        sessionSubject2.date = 13
 
         sessionSubject3.setLector(lector3)
         sessionSubject3.setStudentGroup(group3)
         sessionSubject3.setSubject(subj4)
+        sessionSubject3.date = 22
 
         sessionSubject4.setLector(lector4)
         sessionSubject4.setStudentGroup(group4)
@@ -173,6 +176,7 @@ class DatabaseLoader() : CommandLineRunner {
         sessionSubjectGroupRepo.saveAll(arrayListOf(sessionSubject1, sessionSubject2, sessionSubject3, sessionSubject4, sessionSubject5, sessionSubject6))
 
         val auditorium1 = Auditorium("1-301")
+        //sessionSubject1.setAuditorium(auditorium1);
         val auditorium2 = Auditorium("1-302")
         val auditorium3 = Auditorium("1-303")
         val auditorium4 = Auditorium("1-304")
@@ -181,7 +185,7 @@ class DatabaseLoader() : CommandLineRunner {
         val auditorium7 = Auditorium("1-307")
         val auditorium8 = Auditorium("1-308")
         auditoriumRepo.saveAll(arrayListOf(auditorium1, auditorium2, auditorium3, auditorium4, auditorium5, auditorium6, auditorium7, auditorium8))
-
+        sessionSubjectGroupRepo.saveAll(arrayListOf(sessionSubject1))
         /*cathedraRepo.saveAll(arrayListOf(cath1, cath2, cath3, cath4, cath5, cath6))
         cath1.addAuditorium(auditorium1)
         cath1.addAuditorium(auditorium2)
@@ -191,12 +195,12 @@ class DatabaseLoader() : CommandLineRunner {
         cath2.addAuditorium(auditorium3)
         auditoriumRepo.saveAll(arrayListOf(auditorium1, auditorium2, auditorium3))*/
 
-        auditorium1.addSessionSubjects(sessionSubject1)
-        auditorium2.addSessionSubjects(sessionSubject2)
-        auditorium3.addSessionSubjects(sessionSubject3)
-        auditorium4.addSessionSubjects(sessionSubject4)
-        auditorium5.addSessionSubjects(sessionSubject5)
-        auditorium6.addSessionSubjects(sessionSubject6)
+        auditorium1.addSessionSubjects(sessionSubject2)
+        auditorium2.addSessionSubjects(sessionSubject3)
+        //auditorium3.addSessionSubjects(sessionSubject1)
+//        auditorium4.addSessionSubjects(sessionSubject4)
+//        auditorium5.addSessionSubjects(sessionSubject5)
+//        auditorium6.addSessionSubjects(sessionSubject6)
 
         cathedraRepo.saveAll(arrayListOf(cath1, cath2, cath3, cath4, cath5, cath6))
         lectorRepo.saveAll(arrayListOf(lector1, lector2, lector3, lector4, lector5, lector6, lector7))
@@ -211,4 +215,9 @@ class DatabaseLoader() : CommandLineRunner {
 //        studentsGroupRepo.saveAll(arrayListOf(group1,group2,group3))
 
     }
+}
+
+private fun SessionSubject.setAuditorium(auditorium: Auditorium) {
+    this.auditorium = auditorium
+    auditorium.addSessionSubjects(this)
 }
