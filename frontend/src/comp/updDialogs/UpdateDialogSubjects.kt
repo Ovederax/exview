@@ -50,7 +50,7 @@ class UpdateDialogSubjects: RComponent<UpdateDialogSubjects.Props, UpdateDialogS
     override fun RBuilder.render() {
 		div {
             a("#updSubjects_" + props.num.toString()) {
-                +"Изменить"
+                +"Просмотр"
             }
             div("modalDialog") {
                 attrs["id"] = "updSubjects_" + props.num.toString()
@@ -61,7 +61,7 @@ class UpdateDialogSubjects: RComponent<UpdateDialogSubjects.Props, UpdateDialogS
 							reload()
 						}
 					}
-                    h3 { +"Предметы преподователя" }
+                    h3 { +"Предметы преподователя ${props.jsonLector.name}" }
 					table { tbody {
 						for(i in 0..state.updateList.size-1) {
 							tr {

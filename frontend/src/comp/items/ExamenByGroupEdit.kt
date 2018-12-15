@@ -9,6 +9,7 @@ import model.*
 import org.w3c.dom.*
 import org.w3c.dom.events.Event
 import kotlin.browser.window
+import kotlin.js.Date
 
 class ExamenByGroupEdit: RComponent<ExamenByGroupEdit.Props, ExamenByGroupEdit.State>(){
     var refs:dynamic = null
@@ -64,25 +65,30 @@ class ExamenByGroupEdit: RComponent<ExamenByGroupEdit.Props, ExamenByGroupEdit.S
 		val insSelectDay = state.sessionSubject
 		tr {
             td { +props.jsonStudentGroup.name }
-            for (i in 7..30) {
+			for (i in 6..26) {
 				var b = false
 				val day = i+1
+				val date = Date(2019,0,day)
 				for(it in props.sessionSubjects) {
 					if(it.date == day) {
 						b = true
 					}
 				}
-				var cl: String = "exItemGreen"
-				if(b) {
-					cl = "exItemRed"
-				}				    
-				td(classes = cl) {
-					a("#editByGroup_" + props.num.toString()) {
-						+"+"
-						attrs.onClickFunction = { e->
-							//e.preventDefault()
-							onClick(day) 
-							//window.location.href = "#editByGroup_" + props.num.toString()
+				if(date.getDay() == 0) {
+					td(classes = "exItemGree") {
+						+" "
+					}
+				}else {
+					var cl = "exItemGreen"
+					if (b) {
+						cl = "exItemRed"
+					}
+					td(classes = cl) {
+						a("#editByGroup_" + props.num.toString()) {
+							+"+"
+							attrs.onClickFunction = {
+								onClick(day)
+							}
 						}
 					}
 				}

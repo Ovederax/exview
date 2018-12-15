@@ -15,5 +15,4 @@ class JsonSubject (
 
 interface JsonSubjects {
     val subjects: Array<JsonSubject>
-
 }

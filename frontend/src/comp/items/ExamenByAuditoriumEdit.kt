@@ -9,6 +9,7 @@ import model.*
 import org.w3c.dom.*
 import org.w3c.dom.events.Event
 import kotlin.browser.window
+import kotlin.js.Date
 
 
 class ExamenByAuditoriumEdit: RComponent<ExamenByAuditoriumEdit.Props, ExamenByAuditoriumEdit.State>(){
@@ -68,23 +69,30 @@ class ExamenByAuditoriumEdit: RComponent<ExamenByAuditoriumEdit.Props, ExamenByA
 		
         tr {
             td { +props.jsonAuditorium.name }
-            for (i in 7..30) {
+			for (i in 6..26) {
 				var b = false
 				val day = i+1
+				val date = Date(2019,0,day)
 				for(it in props.sessionSubjects) {
 					if(it.date == day) {
 						b = true
 					}
 				}
-				var cl: String = "exItemGreen"
-				if(b) {
-					cl = "exItemRed"
-				}	
-				td(classes = cl) {
-					a("#editByAuditoruum_" + props.num.toString()) {
-						+"+"
-						attrs.onClickFunction = { e->
-							onClick(day) 
+				if(date.getDay() == 0) {
+					td(classes = "exItemGree") {
+						+" "
+					}
+				}else {
+					var cl = "exItemGreen"
+					if (b) {
+						cl = "exItemRed"
+					}
+					td(classes = cl) {
+						a("#editByAuditoruum_" + props.num.toString()) {
+							+"+"
+							attrs.onClickFunction = {
+								onClick(day)
+							}
 						}
 					}
 				}
@@ -245,7 +253,7 @@ class ExamenByAuditoriumEdit: RComponent<ExamenByAuditoriumEdit.Props, ExamenByA
 								td {
 									val sel = state.selectedSubjectBySessionSubjectNoDay
 									if(sel != null) {
-										var pojo = props.pojoSessionSubjects.get(sel) ?: PojoSessionSubject()
+										val pojo = props.pojoSessionSubjects.get(sel) ?: PojoSessionSubject()
 										+pojo.lectorName
 									} else {
 										+"(пусто)"

@@ -9,15 +9,12 @@ data class Subject (var name: String = ""){
     @GeneratedValue(strategy= GenerationType.AUTO)
     var id: Long = 0
 
-   @ManyToMany//(fetch = FetchType.LAZY, cascade = [CascadeType.MERGE])
+   @ManyToMany
    var lectors: MutableSet<Lector> = HashSet()
 
-    @ManyToMany//(fetch = FetchType.LAZY, cascade = [CascadeType.MERGE])
+    @ManyToMany
     var studentsGroup: MutableSet<StudentsGroup> = HashSet()
 
-//    @ManyToOne(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
-//    var cathedra: Cathedra = Cathedra()
-
-    @OneToMany//( fetch = FetchType.LAZY, cascade = [CascadeType.MERGE])
+    @OneToMany
     var sessionSubjects: MutableSet<SessionSubject> = HashSet()
 }

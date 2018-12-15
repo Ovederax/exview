@@ -17,6 +17,7 @@ class UpdateDialogCathedras: RComponent<UpdateDialogCathedras.Props, RState>() {
         var num : Int
 		var cathedras: List<JsonCathedra>
 		var cathedra: JsonCathedra?
+        var nameLector: String
     }
 
     fun handleSubmit(e: Event) {
@@ -35,8 +36,9 @@ class UpdateDialogCathedras: RComponent<UpdateDialogCathedras.Props, RState>() {
 
     override fun RBuilder.render() {
         div {
+            var name1 = props.cathedra?.name ?: "не установлена"
             a("#updCathedra_" + props.num.toString()) {
-                +"Изменить"
+                +"$name1"
             }
             div("modalDialog") {
                 attrs["id"] = "updCathedra_" + props.num.toString()
@@ -49,7 +51,7 @@ class UpdateDialogCathedras: RComponent<UpdateDialogCathedras.Props, RState>() {
 						}
 					}
 					var name = props.cathedra?.name ?: "не установлена"
-                    h3 { +"Кафедра преподователя" }
+                    h3 { +"Кафедра преподователя ${props.nameLector}" }
 					p { +"На данный момент $name"}
 					p {
                         select(classes = "selectClasses") {
@@ -76,10 +78,11 @@ class UpdateDialogCathedras: RComponent<UpdateDialogCathedras.Props, RState>() {
 }
 
 
-fun RBuilder.UpdateDialogCathedras(num: Int, cathedras: List<JsonCathedra>, cathedra: JsonCathedra?, onUpdate:(JsonCathedra?)->Unit)
+fun RBuilder.UpdateDialogCathedras(num: Int, cathedras: List<JsonCathedra>, cathedra: JsonCathedra?, nameLector: String, onUpdate:(JsonCathedra?)->Unit)
         = child(UpdateDialogCathedras::class) {
     attrs.onUpdate = onUpdate
     attrs.num = num
     attrs.cathedras = cathedras
     attrs.cathedra = cathedra
+    attrs.nameLector = nameLector
 }

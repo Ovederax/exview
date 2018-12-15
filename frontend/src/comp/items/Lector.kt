@@ -40,7 +40,7 @@ class Lector: RComponent<Lector.Props, Lector.State>(){
             td { +props.num.toString() }
             td { +props.jsonLector.name }
             td {
-                UpdateDialogCathedras(props.num, props.cathedras, state.cathedra) {
+                UpdateDialogCathedras(props.num, props.cathedras, state.cathedra, props.jsonLector.name) {
 					//Установка кафедры лектору
 					Loader().setCathedraInLector(PairLectorCathedra(props. jsonLector, it)) {
 						reloadData()

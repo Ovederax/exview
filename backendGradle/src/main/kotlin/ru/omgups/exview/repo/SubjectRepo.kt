@@ -5,6 +5,4 @@ import org.springframework.stereotype.Repository
 import ru.omgups.exview.model.Subject
 
 @Repository
-interface SubjectRepo : PagingAndSortingRepository<Subject,Long> {
-
-}
+interface SubjectRepo : PagingAndSortingRepository<Subject,Long> { }

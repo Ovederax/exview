@@ -15,11 +15,34 @@ class DownloadController {
 
     @Autowired lateinit var excelView: ExcelView
 
-    @GetMapping("/download/{filename:.+}")
+    @GetMapping("/download/table_by_group")//{date}
     @ResponseBody
-    fun serveFile(@PathVariable filename: String): ResponseEntity<Resource> {
+    fun serveFileByGroup(/*@PathVariable("date") date:Int*/): ResponseEntity<Resource> {
+        val file: Resource = excelView.buildExcelDocumentByGroup("table_by_group.xlsx",8)
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
+                "attachment; filename=\"" + file.filename + "\"").body<Resource>(file)
+    }
 
-        val file: Resource = excelView.buildExcelDocument(filename)
+    @GetMapping("/download/table_by_lector")
+    @ResponseBody
+    fun serveFileByLector(/*@PathVariable("date") date:Int*/): ResponseEntity<Resource> {
+        val file: Resource = excelView.buildExcelDocumentByLector("table_by_lector.xlsx",8)
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
+                "attachment; filename=\"" + file.filename + "\"").body<Resource>(file)
+    }
+
+    @GetMapping("/download/table_by_auditorium")
+    @ResponseBody
+    fun serveFileByAuditorium(/*@PathVariable("date") date:Int*/): ResponseEntity<Resource> {
+        val file: Resource = excelView.buildExcelDocumentByAuditorium("table_by_auditorium.xlsx",8)
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
+                "attachment; filename=\"" + file.filename + "\"").body<Resource>(file)
+    }
+
+    @GetMapping("/download/timetable")
+    @ResponseBody
+    fun serveFile(/*@PathVariable("date") date:Int*/): ResponseEntity<Resource> {
+        val file: Resource = excelView.buildExcelDocumentTimetable("timetable.xlsx",8)
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
                 "attachment; filename=\"" + file.filename + "\"").body<Resource>(file)
     }

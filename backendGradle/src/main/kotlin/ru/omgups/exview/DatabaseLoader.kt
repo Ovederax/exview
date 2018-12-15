@@ -150,12 +150,12 @@ class DatabaseLoader() : CommandLineRunner {
         sessionSubject1.setLector(lector1)
         sessionSubject1.setStudentGroup(group1)
         sessionSubject1.setSubject(subj1)
-        //sessionSubject1.date = 10
+        sessionSubject1.date = 10
 
         sessionSubject2.setLector(lector2)
         sessionSubject2.setStudentGroup(group2)
         sessionSubject2.setSubject(subj1)
-        sessionSubject2.date = 13
+        sessionSubject2.date = 14
 
         sessionSubject3.setLector(lector3)
         sessionSubject3.setStudentGroup(group3)

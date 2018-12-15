@@ -29,6 +29,15 @@ class Loader {
 			call(cathedras)
         }  
     }
+	
+	fun loadLectorsList(call: (List<JsonLector>) -> Unit) {
+		val url: String = url("lectors")
+		client.fetch(url) { e ->
+            val embed = JSON.parse<Embedded<JsonLectors>>(e)
+			val lectors = embed._embedded?.lectors?.toList() ?: ArrayList()
+			call(lectors)
+        }  
+    }
 
 	fun loadAuditoriumList(call: (List<JsonAuditorium>) -> Unit) {
 		val url: String = url("auditoriums")
@@ -102,18 +111,6 @@ class Loader {
 		}
 	}
 	
-	fun getStudentGroupsBySubject(subject: JsonSubject, call: (List<JsonStudentGroup>) -> Unit) {
-		/*val url = cathedra._links.lectors?.href
-		if(url != null) {
-			client.fetch(url) { e ->
-				val embed = JSON.parse<Embedded<JsonLectors>>(e)
-				val list = embed._embedded?.lectors?.toList() ?: ArrayList()
-				call(list)
-			} 
-		} else {
-			call(ArrayList())
-		}*/
-	}
 	fun loadAllSubjects(call: (List<JsonSubject>) -> Unit) {
 		val url = url("subjects")
 		if(url != null) {
@@ -182,8 +179,7 @@ class Loader {
 	}
 	
 	// 2 Таблица Группы
-	// Мне нужно устанавливать связки группа-предмет-преподователь для сессионных предметов.
-	
+
 	fun getAllSessionSubject(call: (List<JsonSessionSubject>) -> Unit) {
 		val url = url("sessionSubjects")
 		client.fetch(url) { e ->
@@ -221,11 +217,11 @@ class Loader {
 	
 	fun getPojoSessionSubject(subject: JsonSessionSubject, call: (PojoSessionSubject) -> Unit) {
 		var counter = 0
-		var groupName: String = ""
-		var subjectName: String = ""
-		var lectorName: String = ""
-		var auditorium: String = ""
-		var date: Int = subject.date
+		val groupName: String = ""
+		val subjectName: String = ""
+		val lectorName: String = ""
+		val auditorium: String = ""
+		val date: Int = subject.date
 		val pojo = PojoSessionSubject(groupName, subjectName, lectorName, auditorium, date)
 		
 		var url = subject._links.studentsGroup?.href
@@ -295,7 +291,7 @@ class Loader {
 	fun getUpdateSessionSubject(subject: JsonSessionSubject, call: (UpdateSessionSubject) -> Unit) {
 		var counter = 0
 		
-		var link = subject._links.self ?: Href()
+		val link = subject._links.self ?: Href()
 		val pojo = UpdateSessionSubject(link)
 		pojo.date = subject.date
 		
