@@ -5,60 +5,47 @@ import react.*
 import react.dom.*
 import rest.*
 import comp.infoTables.*
-
+import kotlin.browser.window
 
 class App : RComponent<RProps, App.State>() {
     private val client = Client()
     init {
         state.pageShow = PageShow.INFO
     }
-//    private fun url(str:String) =
-//            "http://localhost:8080/$str"
-//    private fun cleanUrl(str:String?) =
-//            str?.substringBefore("{")!!
-//
-//    init {
-//        state.apply {
-//            lectors = ArrayList()
-//            attributes = ArrayList()
-//            links = Links()
-//            pageSize = 2
-//        }
-//    }
     enum class PageShow {
         INFO, SESSION, EXAMEN
     }
 
-    interface State:RState {
+    interface State: RState {
         var pageShow: PageShow
-//        var attributes: List<Property>
-//        var lectors: List<JsonLector>
-//        var links:Links
-//        var pageSize:Int
-//        var page: Page
+		var gotoSession: Boolean
+		var gotoPage: PageShow
     }
-
-    override fun componentDidMount() {
- 
-//        loadFromServer(state.pageSize)
-    }
-
+	
+	init {
+		state.gotoSession = false
+		state.gotoPage = PageShow.INFO
+	}
+	fun onConfirm(accept: Boolean) {
+		window.location.href = "#"
+		if(accept) {
+			setState{ pageShow = gotoPage}
+		}
+	}
     private fun showInformation() {
         setState {
-            pageShow = PageShow.INFO
-        }
+			pageShow = PageShow.INFO
+		}
     }
 
     private fun showSessionInfo() {
-        setState {
-            pageShow = PageShow.SESSION
-        }
-    }
+        state.gotoPage = PageShow.SESSION
+		window.location.href = "#gotoSession"
+	}
 
     private fun showExamWidget() {
-        setState {
-            pageShow = PageShow.EXAMEN
-        }
+        state.gotoPage = PageShow.EXAMEN
+		window.location.href = "#gotoSession"
     }
     override fun RBuilder.render() {
 		div (classes = "content") {
@@ -80,12 +67,8 @@ class App : RComponent<RProps, App.State>() {
 					}
 				}
 			}
+			ChoseSession(::onConfirm)
 		}
-
-
-//        CreateDialog(state.attributes, ::onCreate)
-//        EmployeeList(state.lectors, state.links,state.page, state.pageSize, ::onNavigate, ::onDelete, ::onUpdatePageSize)
-
     }
 
 

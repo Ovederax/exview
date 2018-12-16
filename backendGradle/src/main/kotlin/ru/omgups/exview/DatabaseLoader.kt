@@ -197,7 +197,7 @@ class DatabaseLoader() : CommandLineRunner {
 
         auditorium1.addSessionSubjects(sessionSubject2)
         auditorium2.addSessionSubjects(sessionSubject3)
-        //auditorium3.addSessionSubjects(sessionSubject1)
+        auditorium3.addSessionSubjects(sessionSubject1)
 //        auditorium4.addSessionSubjects(sessionSubject4)
 //        auditorium5.addSessionSubjects(sessionSubject5)
 //        auditorium6.addSessionSubjects(sessionSubject6)
